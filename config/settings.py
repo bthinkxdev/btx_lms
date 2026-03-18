@@ -28,12 +28,15 @@ SECRET_KEY = config(
 
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-_allowed = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").strip()
+# * allows any Host header (LAN, tunnels). Django only permits * when DEBUG=True.
+_allowed = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,*").strip()
 ALLOWED_HOSTS = [h.strip() for h in _allowed.split(",") if h.strip()]
+if not DEBUG:
+    ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h != "*"]
 if not ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 elif DEBUG and "*" not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS + ["127.0.0.1", "localhost"]))
+    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS + ["127.0.0.1", "localhost", "*"]))
 
 
 # Application definition
