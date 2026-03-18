@@ -1,0 +1,39 @@
+{% extends "lms/emails/base_email.html" %}
+{% block preheader %}Your {{ site_name }} sign-in code is {{ code }}. Valid {{ ttl_minutes }} min.{% endblock %}
+{% block email_title %}Your sign-in code | {{ site_name }}{% endblock %}
+{% block email_body %}
+<h1 style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:24px;font-weight:700;color:#0f172a;letter-spacing:-0.02em;line-height:1.25;">
+  Sign in to {{ site_name }}
+</h1>
+<p style="margin:0 0 24px;font-size:16px;color:#475569;line-height:1.6;">
+  Use the one-time code below to complete your login. For your security, don’t share this code with anyone.
+</p>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td align="center" style="padding:8px 0 28px;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto;">
+        <tr>
+          <td style="background-color:#f5f3ff;border:2px solid #c4b5fd;border-radius:14px;padding:20px 36px;text-align:center;">
+            <span style="font-family:'SF Mono',Consolas,'Liberation Mono',Menlo,monospace;font-size:32px;font-weight:700;letter-spacing:0.35em;color:#4c1d95;line-height:1;">{{ code }}</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 8px;font-size:15px;color:#64748b;">
+  <strong style="color:#334155;">Expires in {{ ttl_minutes }} minutes.</strong> After that, request a new code from the login page.
+</p>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:28px;">
+  <tr>
+    <td style="border-top:1px solid #e2e8f0;padding-top:24px;">
+      <p style="margin:0;font-size:14px;color:#64748b;line-height:1.55;">
+        <strong style="color:#475569;">Didn’t request this?</strong> You can safely ignore this email. Your account stays protected.
+      </p>
+    </td>
+  </tr>
+</table>
+{% endblock %}
+{% block footer_note %}
+Security notice: {{ site_name }} will never ask for this code by phone or SMS.
+{% endblock %}

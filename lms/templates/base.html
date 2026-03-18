@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BThinkX LMS{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/lms_loader.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body{% block body_attr %}{% endblock %}>
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a href="{% url 'lms:home' %}" class="logo-link">
+                        <img src="{% static 'image/logo.jpg' %}" alt="BThinkX" class="logo-img">
+                        <span class="logo-text">BThinkX</span>
+                    </a>
+                </div>
+                <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </button>
+                <div class="navbar-menu" id="navbar-menu">
+                    <a href="{% url 'lms:home' %}" class="nav-link">Home</a>
+                    <a href="{% url 'lms:course_list' %}" class="nav-link">Course</a>
+                    <a href="{% url 'lms:verify_index' %}" class="nav-link">Verify</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'lms:dashboard' %}" class="nav-link">My hub</a>
+                        <form action="{% url 'logout' %}" method="post" class="nav-form" data-loader-message="Signing out…">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    {% else %}
+                        <button type="button"
+                                class="btn btn-outline js-open-login-modal"
+                                data-next="{{ request.path }}">
+                            Login
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary js-open-login-modal"
+                                data-next="{% url 'lms:dashboard' %}">
+                            Sign Up
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="lms-checkout-reminder" class="lms-checkout-reminder" role="region" aria-label="Complete enrollment" hidden>
+        <div class="lms-checkout-reminder-inner">
+            <span class="lms-checkout-reminder-text">Complete your enrollment, you started checkout.</span>
+            <a id="lms-checkout-reminder-link" href="#" class="btn btn-primary btn-sm">Continue</a>
+            <button type="button" class="lms-checkout-reminder-dismiss" aria-label="Dismiss reminder">&times;</button>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div id="login-modal" class="login-modal" aria-hidden="true">
+        <div class="login-modal-backdrop js-close-login-modal"></div>
+        <div class="login-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+            <button type="button" class="login-modal-close js-close-login-modal" aria-label="Close login">
+                <span>&times;</span>
+            </button>
+            <div class="login-modal-body">
+                <h2 id="login-modal-title" class="login-modal-title">Login with email</h2>
+                <p class="login-modal-subtitle">Enter your email to receive a one-time login code.</p>
+
+                <div class="login-modal-messages" id="login-modal-messages" role="alert" aria-live="polite"></div>
+
+                <input type="hidden" id="login-enroll-course-slug" value="">
+
+                <form id="login-email-form" class="login-form-step login-form-step-email">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" id="login-next-input" value="{{ request.path }}">
+                    <div class="form-group">
+                        <label for="login-email-input">Email</label>
+                        <input type="email" id="login-email-input" name="email" required placeholder="you@example.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary login-submit-btn">Send code</button>
+                </form>
+
+                <form id="login-otp-form" class="login-form-step login-form-step-otp" hidden>
+                    {% csrf_token %}
+                    <input type="hidden" name="email" id="login-otp-email-hidden">
+                    <input type="hidden" name="next" id="login-otp-next-hidden">
+                    <div class="form-group">
+                        <label for="login-otp-input">Enter code</label>
+                        <input type="text" id="login-otp-input" name="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
+                    </div>
+                    <button type="submit" class="btn btn-primary login-submit-btn">Verify &amp; login</button>
+                    <button type="button" class="btn btn-outline login-resend-btn" id="login-resend-btn">Resend code</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "lms/partials/conversion_widgets.html" %}
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {% now "Y" %} BThinkX Learning Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="{% static 'js/lms_loader.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/conversion_triggers.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>{% block email_title %}{{ site_name }}{% endblock %}</title>
+  <!--[if mso]>
+  <style type="text/css">
+    table { border-collapse: collapse; }
+    .mso-btn a { text-decoration: none !important; }
+  </style>
+  <![endif]-->
+</head>
+<body style="margin:0;padding:0;width:100%;background-color:#eef2f8;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;">
+  {# Inbox preview line #}
+  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">
+    {% block preheader %}&nbsp;{% endblock %}
+  </div>
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#eef2f8;">
+    <tr>
+      <td align="center" style="padding:32px 16px 48px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;margin:0 auto;">
+          {# Brand ribbon #}
+          <tr>
+            <td style="border-radius:16px 16px 0 0;background:linear-gradient(135deg,#6440FB 0%,#4f29e8 45%,#3b1fc4 100%);padding:28px 32px;text-align:center;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center">
+                    <span style="font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:-0.03em;line-height:1.2;">{{ site_name }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top:8px;">
+                    <span style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.88);letter-spacing:0.04em;text-transform:uppercase;">{{ tagline }}</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {# Main card #}
+          <tr>
+            <td style="background-color:#ffffff;padding:0;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="padding:40px 36px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.65;color:#334155;">
+                    {% block email_body %}{% endblock %}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {# Footer #}
+          <tr>
+            <td style="background-color:#f8fafc;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 16px 16px;padding:24px 32px;text-align:center;">
+              <p style="margin:0 0 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:#64748b;">
+                {% block footer_note %}
+                You’re receiving this because you interacted with {{ site_name }}.
+                {% endblock %}
+              </p>
+              {% if site_url %}
+              <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;">
+                <a href="{{ site_url }}" style="color:#6440FB;font-weight:600;text-decoration:none;">Visit {{ site_name }}</a>
+              </p>
+              {% endif %}
+              <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:12px;color:#94a3b8;">
+                © {{ year }} {{ site_name }}. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:20px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:11px;color:#94a3b8;text-align:center;max-width:600px;margin-left:auto;margin-right:auto;">
+          {% if support_email %}Need help? Reply to this email or write to <a href="mailto:{{ support_email }}" style="color:#64748b;">{{ support_email }}</a>.{% endif %}
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

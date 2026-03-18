@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Free preview: {{ lesson.title }} – {{ course.title }}{% endblock %}
+{% block content %}
+<div class="lesson-page lesson-preview-page">
+    <div class="container">
+        <div class="lesson-preview-banner">
+            <span class="preview-badge"><i class="fas fa-gift" aria-hidden="true"></i> Free preview</span>
+            <p>You’re watching a free sample. <a href="{% url 'lms:course_detail' slug=course.slug %}#enroll">Enroll</a> for full access + quiz progression.</p>
+        </div>
+        <div class="lesson-header">
+            <nav class="breadcrumb">
+                <a href="{% url 'lms:home' %}">Home</a>
+                <span class="separator">/</span>
+                <a href="{% url 'lms:course_detail' slug=course.slug %}">{{ course.title }}</a>
+                <span class="separator">/</span>
+                <span>Preview</span>
+            </nav>
+            <h1>{{ lesson.title }}</h1>
+        </div>
+        <div class="lesson-content">
+            <div class="video-container">
+                <video controls preload="metadata" class="lesson-video"
+                    controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback oncontextmenu="return false;">
+                    {% if video_url %}<source src="{{ video_url }}" type="video/mp4">{% else %}
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">{% endif %}
+                </video>
+            </div>
+            <div class="lesson-info">
+                <h2>{{ lesson.title }}</h2>
+                {% if lesson.duration_seconds %}<p class="lesson-meta">~{{ lesson.duration_seconds }} sec</p>{% endif %}
+            </div>
+            <p class="preview-cta-wrap">
+                <a href="{% url 'lms:course_detail' slug=course.slug %}#enroll" class="btn btn-primary">Unlock full course</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,759 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}BThinkX – Professional Prompt Engineering for AI Productivity &amp; Careers{% endblock %}
+{% block body_attr %} class="home-pg"{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="home-hero" aria-labelledby="home-hero-title" data-ab-section="hero">
+  <div class="home-hero__grid">
+
+    <div class="home-hero__content">
+      <span class="home-hero__eyebrow">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+        Become a {{ LMS_IDENTITY_LABEL }}
+      </span>
+      <h1 class="home-hero__title" id="home-hero-title">
+        Master <em>Prompt Engineering</em><br>in 7 days
+      </h1>
+      <p class="home-hero__subtitle">
+        For working professionals, job seekers &amp; freelancers. Structured daily lessons,
+        quiz-gated progression, and a verified <strong style="color:var(--p-grey-900)">CPEP credential</strong> employers can check.
+      </p>
+
+      <ul class="home-hero__bullets" aria-label="Program highlights">
+        <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Video lessons + downloadable recap notes every day</li>
+        <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Daily quiz (6/10+) unlocks the next day, no passive watching</li>
+        <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Role-based prompt templates: dev, HR, sales, job search &amp; more</li>
+        <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Final exam → PDF certificate + public verification ID</li>
+      </ul>
+
+      {% if LMS_OFFER_COUNTDOWN_ISO %}
+      <p class="home-hero__countdown" id="home-countdown" data-end="{{ LMS_OFFER_COUNTDOWN_ISO }}">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+        <span class="cd-label">Offer ends in</span>
+        <span class="cd-digits" aria-live="polite">--:--:--</span>
+      </p>
+      {% endif %}
+      <p class="home-hero__scarcity">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+        {{ LMS_LIMITED_SEATS_TEXT }}{% if LMS_SEATS_LEFT != None %}
+          <strong>Only {{ LMS_SEATS_LEFT }} seats left</strong>
+        {% endif %}
+      </p>
+
+      <div class="home-hero__actions">
+        <a href="{% url 'lms:course_list' %}#enroll" class="home-btn-primary">
+          <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+          Enroll now · ₹{{ LMS_COURSE_PRICE_DISPLAY }}
+        </a>
+        <button type="button" class="home-btn-light js-open-lead-modal" data-source="hero_lead_magnet">
+          Get free AI prompts
+        </button>
+        {% if user.is_authenticated %}
+        <a href="{% url 'lms:dashboard' %}" class="home-btn-outline">
+          <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> My Hub
+        </a>
+        {% endif %}
+      </div>
+
+      <div class="home-hero__trust" aria-label="Trust indicators">
+        <span class="home-hero__trust-item">
+          <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+          ₹{{ LMS_ORIGINAL_PRICE_INR|default:4999 }} → ₹{{ LMS_COURSE_PRICE_DISPLAY }}
+        </span>
+        <span class="home-hero__trust-item">
+          <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+          Quiz-based unlock
+        </span>
+        <span class="home-hero__trust-item">
+          <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+          CPEP certificate
+        </span>
+      </div>
+
+      <div class="home-hero__micro" aria-label="Quick facts">
+        <span class="home-hero__micro-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure Razorpay checkout</span>
+        <span class="home-hero__micro-item"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Day 1 unlocks instantly</span>
+        <span class="home-hero__micro-item"><i class="fa-solid fa-infinity" aria-hidden="true"></i> Lifetime access to materials</span>
+        <span class="home-hero__micro-item"><i class="fa-solid fa-qrcode" aria-hidden="true"></i> Shareable verify link</span>
+      </div>
+    </div>
+
+    <div class="home-hero__video-wrap">
+      <div class="home-hero__video-card">
+        <video
+          class="hero-video lms-autoplay-muted-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          controls
+          poster="https://via.placeholder.com/800x450/6440FB/ffffff?text=Video+Preview"
+          preload="auto"
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
+          disableRemotePlayback
+          oncontextmenu="return false;"
+          aria-label="Course preview video. Plays automatically muted; use controls to unmute.">
+          {% if hero_video_url %}
+          <source src="{{ hero_video_url }}" type="video/mp4">
+          {% else %}
+          <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+          {% endif %}
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="home-hero__stack">
+        <div class="home-hero__mini-card">
+          <i class="fa-solid fa-video" aria-hidden="true"></i>
+          <div>
+            <strong>Structured video path</strong>
+            <span>Short lessons you can finish on a lunch break</span>
+          </div>
+        </div>
+        <div class="home-hero__mini-card">
+          <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+          <div>
+            <strong>6 gated day quizzes + final exam</strong>
+            <span>Proves retention, not just “watched”</span>
+          </div>
+        </div>
+        <div class="home-hero__mini-card">
+          <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+          <div>
+            <strong>Prompt worksheets &amp; examples</strong>
+            <span>Copy, adapt, and reuse in your real work</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="home-mega-stats" aria-label="Program facts">
+  <div class="home-mega-stats__grid">
+    <div class="home-mega-stats__cell"><div class="home-mega-stats__num">7</div><div class="home-mega-stats__lbl">Calendar days</div></div>
+    <div class="home-mega-stats__cell"><div class="home-mega-stats__num">6</div><div class="home-mega-stats__lbl">Learning modules</div></div>
+    <div class="home-mega-stats__cell"><div class="home-mega-stats__num">6</div><div class="home-mega-stats__lbl">Daily quizzes</div></div>
+    <div class="home-mega-stats__cell"><div class="home-mega-stats__num">1</div><div class="home-mega-stats__lbl">Capstone exam</div></div>
+    <div class="home-mega-stats__cell"><div class="home-mega-stats__num">CPEP</div><div class="home-mega-stats__lbl">Credential tier</div></div>
+    <div class="home-mega-stats__cell"><div class="home-mega-stats__num">∞</div><div class="home-mega-stats__lbl">Lifetime access</div></div>
+  </div>
+  <p class="home-mega-stats__foot">
+    One focused week: foundations → workplace prompts → job search → domains → ethics → certification.
+    Built for people who want <strong>proof of skill</strong>, not another unfinished course.
+  </p>
+</div>
+
+<section class="home-section-wrap" aria-labelledby="achieve-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Outcomes</span>
+      <h2 class="home-sec-title" id="achieve-h">What you will achieve</h2>
+      <p class="home-sec-sub">Concrete skills and assets you can show employers or clients, not vague “AI awareness.”</p>
+    </div>
+    <div class="home-feature-grid home-feature-grid--6">
+      <div class="home-feature-card">
+        <div class="home-feature-card__ico"><i class="fa-solid fa-brain" aria-hidden="true"></i></div>
+        <h3 class="home-feature-card__title">Reliable AI outputs</h3>
+        <p class="home-feature-card__desc">Structure prompts so ChatGPT &amp; similar tools give consistent, on-format answers you can trust in production.</p>
+      </div>
+      <div class="home-feature-card">
+        <div class="home-feature-card__ico"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></div>
+        <h3 class="home-feature-card__title">Portfolio-ready prompts</h3>
+        <p class="home-feature-card__desc">A reusable library for developer, HR, marketing, manager, and freelance workflows.</p>
+      </div>
+      <div class="home-feature-card">
+        <div class="home-feature-card__ico"><i class="fa-solid fa-bolt" aria-hidden="true"></i></div>
+        <h3 class="home-feature-card__title">Daily accountability</h3>
+        <p class="home-feature-card__desc">Quiz-gated days keep you honest, finish today before tomorrow unlocks.</p>
+      </div>
+      <div class="home-feature-card">
+        <div class="home-feature-card__ico"><i class="fa-solid fa-certificate" aria-hidden="true"></i></div>
+        <h3 class="home-feature-card__title">CPEP credential</h3>
+        <p class="home-feature-card__desc">Pass Day 7 → instant PDF + unique ID + QR anyone can verify online.</p>
+      </div>
+      <div class="home-feature-card">
+        <div class="home-feature-card__ico"><i class="fa-solid fa-user-tie" aria-hidden="true"></i></div>
+        <h3 class="home-feature-card__title">Hiring-ready proof</h3>
+        <p class="home-feature-card__desc">Resume bullets, LinkedIn headline prompts, and interview answer frameworks included.</p>
+      </div>
+      <div class="home-feature-card">
+        <div class="home-feature-card__ico"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></div>
+        <h3 class="home-feature-card__title">Safe, professional use</h3>
+        <p class="home-feature-card__desc">Ethics, hallucination guardrails, and when <em>not</em> to rely on the model alone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="included-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Inside the box</span>
+      <h2 class="home-sec-title" id="included-h">Everything included in your enrollment</h2>
+      <p class="home-sec-sub">No upsell for “the real content”, this is the full stack for one price.</p>
+    </div>
+    <div class="home-included">
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>On-demand video lessons</h3>
+          <p>Broken into digestible segments per day. Rewatch anytime.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-list-check" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Daily knowledge checks</h3>
+          <p>10 questions per day, 6 correct to unlock the next module.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Certificate PDF</h3>
+          <p>Auto-generated after you pass the final exam. Download and share.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-link" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Public verification</h3>
+          <p>Employers paste your ID on our verify page, instant authenticity check.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-comments" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Role-specific prompt packs</h3>
+          <p>Emails, specs, JDs, proposals, study plans, starters you refine.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-book-open" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Advanced patterns</h3>
+          <p>Chain-of-thought, JSON output, few-shot, system vs user messages.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-building-columns" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Workplace scenarios</h3>
+          <p>Meetings, docs, research, code explanation, stakeholder updates.</p>
+        </div>
+      </div>
+      <div class="home-included__cell">
+        <div class="home-included__ico"><i class="fa-solid fa-headset" aria-hidden="true"></i></div>
+        <div class="home-included__body">
+          <h3>Support via your account</h3>
+          <p>Log in to My Hub for progress, profile, and course access in one place.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="program-h">
+  <div class="home-section-inner">
+    <div class="home-program-grid">
+      <div>
+        <img src="{% static 'image/prompt.jpg' %}"
+             alt="Professional Prompt Engineering course"
+             style="width:100%;border-radius:var(--p-radius-xl);box-shadow:var(--p-shadow-violet);display:block;"
+             loading="lazy">
+      </div>
+      <div>
+        <span class="home-sec-eyebrow">The Program</span>
+        <h2 class="home-sec-title home-sec-head--left" id="program-h" style="text-align:left;margin-bottom:14px;">
+          Professional Prompt Engineering<br>for AI Productivity &amp; Careers
+        </h2>
+        <p style="font-size:0.95rem;color:var(--p-grey-600);line-height:1.65;margin-bottom:20px;">
+          Master the art of writing effective prompts. Build an AI-first mindset, create portfolio-ready prompts, and earn your CPEP certification in one intensive week. Stand out at work and in the job market.
+        </p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px;">
+          <span class="pg-badge pg-badge--violet"><i class="fa-regular fa-calendar-days" aria-hidden="true"></i> 7 days</span>
+          <span class="pg-badge pg-badge--violet"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> 6 modules</span>
+          <span class="pg-badge pg-badge--green"><i class="fa-solid fa-award" aria-hidden="true"></i> CPEP Cert</span>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;">
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--p-grey-700);">
+            <i class="fa-solid fa-check" style="color:var(--p-violet);font-size:0.75rem;" aria-hidden="true"></i>
+            Role-based prompts for Developer, Manager, HR, Marketing
+          </li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--p-grey-700);">
+            <i class="fa-solid fa-check" style="color:var(--p-violet);font-size:0.75rem;" aria-hidden="true"></i>
+            Resume &amp; LinkedIn optimization (ATS-ready)
+          </li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--p-grey-700);">
+            <i class="fa-solid fa-check" style="color:var(--p-violet);font-size:0.75rem;" aria-hidden="true"></i>
+            Freelancer proposal &amp; client communication
+          </li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--p-grey-700);">
+            <i class="fa-solid fa-check" style="color:var(--p-violet);font-size:0.75rem;" aria-hidden="true"></i>
+            Chain-of-Thought &amp; advanced techniques
+          </li>
+          <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--p-grey-700);">
+            <i class="fa-solid fa-check" style="color:var(--p-violet);font-size:0.75rem;" aria-hidden="true"></i>
+            AI ethics, safety &amp; professional prompt design
+          </li>
+        </ul>
+        {% for course in courses %}
+        <a href="{% url 'lms:course_detail' slug=course.slug %}" class="pg-btn pg-btn--primary pg-btn--lg">
+          View curriculum &amp; enroll
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+        {% empty %}
+        <a href="{% url 'lms:course_list' %}" class="pg-btn pg-btn--primary pg-btn--lg">
+          View curriculum <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap" aria-labelledby="compare-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Why this format</span>
+      <h2 class="home-sec-title" id="compare-h">Structured program vs. random YouTube tips</h2>
+      <p class="home-sec-sub">Same tools, very different outcomes.</p>
+    </div>
+    <div class="home-compare">
+      <div class="home-compare__col">
+        <p class="home-compare__h">Random tutorials</p>
+        <ul>
+          <li>No sequence, you don&rsquo;t know what you missed</li>
+          <li>No proof you retained anything</li>
+          <li>Certificate often meaningless</li>
+          <li>Hard to explain to an employer</li>
+        </ul>
+      </div>
+      <div class="home-compare__col home-compare__col--highlight">
+        <p class="home-compare__h">BThinkX 7-day path</p>
+        <ul>
+          <li>Fixed curriculum: Day 1→7, no guesswork</li>
+          <li>Quizzes force recall before you advance</li>
+          <li>Verified CPEP + public ID check</li>
+          <li>Concrete prompt types for your role</li>
+        </ul>
+      </div>
+      <div class="home-compare__col">
+        <p class="home-compare__h">What you leave with</p>
+        <ul>
+          <li>Reusable prompt patterns</li>
+          <li>Exam-pass evidence</li>
+          <li>Shareable verification link</li>
+          <li>Materials you can revisit forever</li>
+        </ul>
+      </div>
+    </div>
+    <div class="home-tools-row" aria-label="Tools covered">
+      <span>Works with <strong>ChatGPT</strong>, <strong>Claude</strong>, <strong>Gemini</strong></span>
+      <span aria-hidden="true">·</span>
+      <span>Principles apply to <strong>any</strong> chat LLM API</span>
+      <span aria-hidden="true">·</span>
+      <span>No vendor lock-in</span>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="audience-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">For You</span>
+      <h2 class="home-sec-title" id="audience-h">Who Should Take This Program?</h2>
+      <p class="home-sec-sub">Whether you want to upskill, get hired, or grow as a freelancer, this program is built for you.</p>
+    </div>
+    <div class="home-audience-grid">
+
+      <div class="home-audience-card">
+        <div class="home-audience-card__icon"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></div>
+        <h3 class="home-audience-card__title">Working Professionals</h3>
+        <p class="home-audience-card__sub">Upskilling · Productivity</p>
+        <ul>
+          <li><strong>Developers</strong>, faster debugging, code docs, refactoring</li>
+          <li><strong>Managers / BAs</strong>, market research, SWOT, reports</li>
+          <li><strong>HR</strong>, job descriptions, resume screening, policy drafts</li>
+          <li><strong>Marketing &amp; Sales</strong>, ad copy, campaigns, personas</li>
+        </ul>
+        <span class="home-audience-card__benefit">Saves 30–50% time on daily tasks</span>
+      </div>
+
+      <div class="home-audience-card">
+        <div class="home-audience-card__icon"><i class="fa-solid fa-user-graduate" aria-hidden="true"></i></div>
+        <h3 class="home-audience-card__title">Job Seekers</h3>
+        <p class="home-audience-card__sub">Career Edge · Hiring</p>
+        <ul>
+          <li><strong>Fresh graduates</strong>, ATS resume, LinkedIn, mock interviews</li>
+          <li><strong>Career switchers</strong>, roadmap, industry research, project ideas</li>
+        </ul>
+        <span class="home-audience-card__benefit">Stand out from 90% of candidates</span>
+      </div>
+
+      <div class="home-audience-card home-audience-card--featured">
+        <div class="home-audience-card__icon"><i class="fa-solid fa-laptop-code" aria-hidden="true"></i></div>
+        <h3 class="home-audience-card__title">Freelancers &amp; Consultants</h3>
+        <p class="home-audience-card__sub">AI-Powered Growth Program</p>
+        <ul>
+          <li>Faster proposal writing</li>
+          <li>Client communication drafts</li>
+          <li>Portfolio content generation</li>
+          <li>Project scoping prompts</li>
+        </ul>
+        <span class="home-audience-card__benefit">Increases earning potential</span>
+      </div>
+
+      <div class="home-audience-card">
+        <div class="home-audience-card__icon"><i class="fa-solid fa-rocket" aria-hidden="true"></i></div>
+        <h3 class="home-audience-card__title">Entrepreneurs &amp; Founders</h3>
+        <p class="home-audience-card__sub">Startup · Growth</p>
+        <ul>
+          <li>Business idea validation</li>
+          <li>Marketing planning</li>
+          <li>Financial projection drafts</li>
+          <li>Content strategy</li>
+        </ul>
+        <span class="home-audience-card__benefit">AI becomes your low-cost assistant</span>
+      </div>
+
+      <div class="home-audience-card">
+        <div class="home-audience-card__icon"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i></div>
+        <h3 class="home-audience-card__title">Students</h3>
+        <p class="home-audience-card__sub">Final Year / PG</p>
+        <ul>
+          <li>Research assistance</li>
+          <li>Assignment structuring</li>
+          <li>Concept simplification</li>
+          <li>Learning acceleration</li>
+        </ul>
+        <span class="home-audience-card__benefit">Improves academic performance</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap" aria-labelledby="curriculum-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Curriculum</span>
+      <h2 class="home-sec-title" id="curriculum-h">What You&rsquo;ll Learn</h2>
+      <p class="home-sec-sub">Six modules, one per day. Day 7 is your exam and CPEP certification.</p>
+    </div>
+    <div class="home-day-grid">
+      <a href="{% url 'lms:course_list' %}" class="home-day-card">
+        <div class="home-day-card__icon"><i class="fa-solid fa-brain" aria-hidden="true"></i></div>
+        <span class="home-day-card__name">Day 1: Foundations of Prompt Engineering</span>
+        <span class="home-day-card__meta">Mindset, tokens, clarity, failure modes</span>
+      </a>
+      <a href="{% url 'lms:course_list' %}" class="home-day-card">
+        <div class="home-day-card__icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i></div>
+        <span class="home-day-card__name">Day 2: Structures &amp; Advanced Techniques</span>
+        <span class="home-day-card__meta">CoT, roles, JSON output, few-shot</span>
+      </a>
+      <a href="{% url 'lms:course_list' %}" class="home-day-card">
+        <div class="home-day-card__icon"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></div>
+        <span class="home-day-card__name">Day 3: Work Productivity</span>
+        <span class="home-day-card__meta">Email, docs, meetings, role-specific</span>
+      </a>
+      <a href="{% url 'lms:course_list' %}" class="home-day-card">
+        <div class="home-day-card__icon"><i class="fa-solid fa-user-tie" aria-hidden="true"></i></div>
+        <span class="home-day-card__name">Day 4: Job Seekers &amp; Career Edge</span>
+        <span class="home-day-card__meta">Resume, LinkedIn, interviews, networking</span>
+      </a>
+      <a href="{% url 'lms:course_list' %}" class="home-day-card">
+        <div class="home-day-card__icon"><i class="fa-solid fa-palette" aria-hidden="true"></i></div>
+        <span class="home-day-card__name">Day 5: Domain-Specific</span>
+        <span class="home-day-card__meta">Tech, business, creative workflows</span>
+      </a>
+      <a href="{% url 'lms:course_list' %}" class="home-day-card">
+        <div class="home-day-card__icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></div>
+        <span class="home-day-card__name">Day 6: Ethics &amp; Professional Design</span>
+        <span class="home-day-card__meta">Safety, bias, IP, enterprise norms</span>
+      </a>
+      <a href="{% url 'lms:course_list' %}" class="home-day-card" style="border-color:rgba(5,150,105,0.3);background:var(--p-green-bg);">
+        <div class="home-day-card__icon" style="background:var(--p-green-bg);color:var(--p-green);"><i class="fa-solid fa-award" aria-hidden="true"></i></div>
+        <span class="home-day-card__name" style="color:var(--p-green);font-weight:700;">Day 7: Exam + CPEP Certification</span>
+        <span class="home-day-card__meta" style="color:var(--p-green);">MCQ + practical prompts → credential</span>
+      </a>
+    </div>
+    <p style="text-align:center;margin-top:32px;">
+      <a href="{% url 'lms:course_list' %}" class="pg-btn pg-btn--outline">See full curriculum</a>
+    </p>
+  </div>
+</section>
+
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="how-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Process</span>
+      <h2 class="home-sec-title" id="how-h">How It Works</h2>
+      <p class="home-sec-sub">From checkout to credential, four clear steps.</p>
+    </div>
+    <div class="home-steps">
+      <div class="home-step">
+        <div class="home-step__num">1</div>
+        <h3 class="home-step__title">Enroll</h3>
+        <p class="home-step__desc">Sign up and pay once. Day 1 unlocks immediately.</p>
+      </div>
+      <div class="home-step">
+        <div class="home-step__num">2</div>
+        <h3 class="home-step__title">Learn Day by Day</h3>
+        <p class="home-step__desc">One module per day (Days 1–6). Watch lessons and build your prompt library.</p>
+      </div>
+      <div class="home-step">
+        <div class="home-step__num">3</div>
+        <h3 class="home-step__title">Pass the Quiz</h3>
+        <p class="home-step__desc">Score 6/10+ on each day's quiz to unlock the next module. Stay accountable.</p>
+      </div>
+      <div class="home-step">
+        <div class="home-step__num">4</div>
+        <h3 class="home-step__title">Get Your CPEP</h3>
+        <p class="home-step__desc">Pass the Day 7 exam → instant certificate with unique ID &amp; QR code.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap" aria-labelledby="timeline-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Schedule</span>
+      <h2 class="home-sec-title" id="timeline-h">Your Week</h2>
+      <p class="home-sec-sub">One focused day at a time, from foundations to certified professional.</p>
+    </div>
+    <div class="home-timeline">
+      <div class="home-tl-item"><div class="home-tl-dot">Day 1</div><div class="home-tl-text">Foundations of prompt engineering, mindset &amp; mechanics</div></div>
+      <div class="home-tl-item"><div class="home-tl-dot">Day 2</div><div class="home-tl-text">Prompt structures &amp; advanced techniques</div></div>
+      <div class="home-tl-item"><div class="home-tl-dot">Day 3</div><div class="home-tl-text">Work productivity, emails, docs, role-specific prompts</div></div>
+      <div class="home-tl-item"><div class="home-tl-dot">Day 4</div><div class="home-tl-text">Job seekers &amp; career edge, resume, LinkedIn, interviews</div></div>
+      <div class="home-tl-item"><div class="home-tl-dot">Day 5</div><div class="home-tl-text">Domain-specific prompts, tech, business, creative</div></div>
+      <div class="home-tl-item"><div class="home-tl-dot">Day 6</div><div class="home-tl-text">AI ethics, safety &amp; professional prompt design</div></div>
+      <div class="home-tl-item home-tl-item--exam"><div class="home-tl-dot">Day 7</div><div class="home-tl-text"><strong>Final exam + CPEP certification</strong>, you've made it.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="cert-h">
+  <div class="home-section-inner">
+    <div class="home-cert-card">
+      <div class="home-cert-card__icon" aria-hidden="true">
+        <i class="fa-solid fa-award"></i>
+      </div>
+      <h2 class="home-cert-card__title" id="cert-h">CPEP Certificate &amp; Verification</h2>
+      <p class="home-cert-card__desc">
+        Pass the Day 7 exam to earn your Certified Prompt Engineering Professional (CPEP) credential.
+        Every certificate carries a unique ID and QR code, anyone can verify it on our public page.
+      </p>
+      <ul>
+        <li><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> CPEP credential (Beginner / Skilled / Advanced)</li>
+        <li><i class="fa-solid fa-qrcode" aria-hidden="true"></i> Unique certificate ID &amp; QR code</li>
+        <li><i class="fa-solid fa-globe" aria-hidden="true"></i> Public verification page, share with employers</li>
+      </ul>
+      <a href="{% url 'lms:verify_index' %}" class="pg-btn pg-btn--primary">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        Verify a Certificate
+      </a>
+    </div>
+  </div>
+</section>
+
+{% include "lms/partials/proof_real_results.html" %}
+
+<section class="home-section-wrap" aria-labelledby="outcomes-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Social Proof</span>
+      <h2 class="home-sec-title" id="outcomes-h">Learner Outcomes</h2>
+      <p class="home-sec-sub">Structured for real results.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:32px;">
+      <div class="pg-stat" style="text-align:center;">
+        <div class="pg-stat__val pg-stat__val--violet" style="font-size:2.2rem;">30–50%</div>
+        <div class="pg-stat__label">Typical time saved on daily tasks (self-reported)</div>
+      </div>
+      <div class="pg-stat" style="text-align:center;">
+        <div class="pg-stat__val pg-stat__val--violet" style="font-size:2.2rem;">7 days</div>
+        <div class="pg-stat__label">Zero to exam-ready prompt workflow</div>
+      </div>
+      <div class="pg-stat" style="text-align:center;">
+        <div class="pg-stat__val pg-stat__val--green" style="font-size:2.2rem;">✓</div>
+        <div class="pg-stat__label">Shareable certificate + public ID check</div>
+      </div>
+    </div>
+    <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;max-width:540px;margin:0 auto;">
+      <li style="display:flex;align-items:center;gap:12px;font-size:0.9rem;color:var(--p-grey-700);padding:12px 16px;background:var(--p-white);border-radius:10px;border:1px solid var(--p-grey-200);">
+        <i class="fa-solid fa-briefcase" style="color:var(--p-violet);" aria-hidden="true"></i>
+        <span><strong>Freelancers:</strong> faster proposals &amp; client comms</span>
+      </li>
+      <li style="display:flex;align-items:center;gap:12px;font-size:0.9rem;color:var(--p-grey-700);padding:12px 16px;background:var(--p-white);border-radius:10px;border:1px solid var(--p-grey-200);">
+        <i class="fa-solid fa-user-graduate" style="color:var(--p-violet);" aria-hidden="true"></i>
+        <span><strong>Job seekers:</strong> resume &amp; LinkedIn optimization prompts</span>
+      </li>
+      <li style="display:flex;align-items:center;gap:12px;font-size:0.9rem;color:var(--p-grey-700);padding:12px 16px;background:var(--p-white);border-radius:10px;border:1px solid var(--p-grey-200);">
+        <i class="fa-solid fa-users" style="color:var(--p-violet);" aria-hidden="true"></i>
+        <span><strong>Teams:</strong> repeatable prompts for docs, code &amp; research</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+{% if not testimonials %}
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="testimonials-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Testimonials</span>
+      <h2 class="home-sec-title" id="testimonials-h">What Learners Say</h2>
+      <p class="home-sec-sub">Real feedback from professionals who completed the intensive week.</p>
+    </div>
+    <div class="home-testimonial-grid">
+      <div class="home-quote-card">
+        <div class="home-quote-card__stars" aria-label="5 stars">★★★★★</div>
+        <p class="home-quote-card__text">&ldquo;Practical and job-focused, worth every rupee. The quiz-based unlocking kept me accountable; I actually finished instead of abandoning half-way like other courses.&rdquo;</p>
+        <p class="home-quote-card__who">Priya K.</p>
+        <p class="home-quote-card__role">Product manager, Bangalore</p>
+      </div>
+      <div class="home-quote-card">
+        <div class="home-quote-card__stars" aria-label="5 stars">★★★★★</div>
+        <p class="home-quote-card__text">&ldquo;I use the HR and email prompts weekly. The certificate gave me something concrete to put on LinkedIn while job hunting.&rdquo;</p>
+        <p class="home-quote-card__who">Rahul M.</p>
+        <p class="home-quote-card__role">HR specialist, remote</p>
+      </div>
+      <div class="home-quote-card">
+        <div class="home-quote-card__stars" aria-label="5 stars">★★★★★</div>
+        <p class="home-quote-card__text">&ldquo;As a dev, the code-review and doc prompts alone paid for the course. Seven days is tight but doable alongside work.&rdquo;</p>
+        <p class="home-quote-card__who">Anonymous learner</p>
+        <p class="home-quote-card__role">Software engineer, India</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="home-section-wrap" id="pricing" aria-labelledby="pricing-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">Pricing</span>
+      <h2 class="home-sec-title" id="pricing-h">Launch Pricing</h2>
+      <p class="home-sec-sub">One-time investment. Lifetime access. Permanent credential.</p>
+    </div>
+    <div class="home-split-pricing">
+      <div class="home-pricing-include">
+        <h3>Your enrollment includes</h3>
+        <ul>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Full 7-day curriculum + all future content updates for this program</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> 6 daily quizzes + final exam (unlimited attempts where policy allows)</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> CPEP PDF certificate + public verification page</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> My Hub dashboard, progress, profile, portfolio links</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Secure payment via Razorpay (UPI, cards, netbanking)</li>
+          <li><i class="fa-solid fa-check" aria-hidden="true"></i> Email OTP login, no password to forget</li>
+        </ul>
+      </div>
+      <div>
+        <div class="home-price-card lms-pricing-hover">
+          <span class="home-price-card__badge">Limited time offer</span>
+          <p class="home-price-card__original">Was ₹{{ LMS_ORIGINAL_PRICE_INR|default:4999 }}</p>
+          <p class="home-price-card__price">
+            <sup>₹</sup>{{ LMS_COURSE_PRICE_DISPLAY }}
+          </p>
+          <p class="home-price-card__note">one-time payment · no subscription</p>
+          <span class="home-price-card__save">You save ₹{{ LMS_SAVINGS_INR }}</span>
+          <div class="home-price-card__actions">
+            <a href="{% url 'lms:course_list' %}#enroll" class="pg-btn pg-btn--primary pg-btn--lg" style="justify-content:center;">
+              <i class="fa-solid fa-rocket" aria-hidden="true"></i> Enroll now
+            </a>
+            <button type="button" class="pg-btn pg-btn--outline js-open-lead-modal" data-source="pricing_lead" style="justify-content:center;">
+              Get free prompts first
+            </button>
+            {% if LMS_MENTOR_URL %}
+            <a href="{{ LMS_MENTOR_URL }}" class="pg-btn pg-btn--ghost" target="_blank" rel="noopener noreferrer" style="justify-content:center;">
+              {{ LMS_MENTOR_CTA }}
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include "lms/partials/objections_accordion.html" %}
+
+<section class="home-section-wrap home-section-wrap--alt" aria-labelledby="faq-h">
+  <div class="home-section-inner">
+    <div class="home-sec-head">
+      <span class="home-sec-eyebrow">FAQ</span>
+      <h2 class="home-sec-title" id="faq-h">Frequently Asked Questions</h2>
+      <p class="home-sec-sub">Everything else you might want to know before enrolling.</p>
+    </div>
+    <div class="home-faq" role="list">
+      <details class="home-faq-item">
+        <summary class="faq-question">When do lessons unlock?</summary>
+        <div class="home-faq-answer">Day 1 opens right after you enroll and pay. For Day 2 onward, you must complete the <strong>previous day's quiz</strong> and score <strong>at least 6 out of 10</strong>. That's how we keep you on track, no skipping ahead.</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">How do I get my CPEP certificate?</summary>
+        <div class="home-faq-answer">After you pass the <strong>final exam</strong>, your certificate is <strong>created automatically</strong>, no waiting for manual approval. Download the PDF and share your public verification link.</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">Can I verify a certificate?</summary>
+        <div class="home-faq-answer">Yes. Use our verification page and enter the certificate ID. Anyone can confirm that a CPEP credential is genuine, employers, clients, or hiring managers.</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">Is this only prompt engineering?</summary>
+        <div class="home-faq-answer">Yes. BThinkX currently offers this one program: Professional Prompt Engineering for AI Productivity &amp; Careers. It covers foundations, workplace use, job search, domains, and ethics, all in one week.</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">Do I need ChatGPT Plus?</summary>
+        <div class="home-faq-answer">No. The course teaches patterns that work on free tiers and paid tiers. You can complete exercises with any major chat LLM (ChatGPT, Claude, Gemini, etc.).</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">What if I fail a day quiz?</summary>
+        <div class="home-faq-answer">You can retry until you score 6/10 or higher. The goal is learning, not punishment, but you must demonstrate understanding before the next day unlocks.</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">How long do I have access?</summary>
+        <div class="home-faq-answer">Lifetime access to the course materials for this program as long as your account remains active. Revisit lessons and prompts whenever you need a refresher.</div>
+      </details>
+      <details class="home-faq-item">
+        <summary class="faq-question">Is there a refund policy?</summary>
+        <div class="home-faq-answer">Refund terms depend on our published policy at checkout. Complete the free lead-magnet flow first if you want to sample our teaching style before paying.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="home-cta-section" aria-labelledby="final-cta-h">
+  <div class="home-cta-section__inner">
+    <h2 class="home-cta-section__title" id="final-cta-h">
+      Ready to become a {{ LMS_IDENTITY_LABEL }}?
+    </h2>
+    <p class="home-cta-section__sub">
+      Enroll with secure payment, start Day 1 immediately, unlock the rest by passing each day's quiz.
+    </p>
+    <div class="home-cta-section__actions">
+      <a href="{% url 'lms:course_list' %}#enroll" class="home-btn-primary">
+        <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+        Enroll now · ₹{{ LMS_COURSE_PRICE_DISPLAY }}
+      </a>
+      <button type="button" class="home-btn-outline js-open-lead-modal" data-source="footer_lead">
+        Free AI prompts
+      </button>
+      {% if LMS_MENTOR_URL %}
+      <a href="{{ LMS_MENTOR_URL }}" class="home-btn-light" target="_blank" rel="noopener noreferrer">
+        {{ LMS_MENTOR_CTA }}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% load static %}
+<section class="sp-hero dashboard-card" aria-labelledby="sp-hero-name">
+  <div class="sp-hero-grid">
+    <div class="sp-hero-left">
+      <div class="sp-hero-avatar-wrap">
+        {% if learner_profile.profile_photo %}
+          <img src="{{ learner_profile.profile_photo.url }}" alt="" class="sp-hero-avatar" width="120" height="120" id="sp-hero-photo">
+        {% else %}
+          <div class="sp-hero-avatar sp-hero-avatar--placeholder" id="sp-hero-photo-placeholder" aria-hidden="true">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        {% endif %}
+      </div>
+      <h1 class="sp-hero-name" id="sp-hero-name">{{ learner_profile.display_name }}</h1>
+      <p class="sp-hero-role">{{ LMS_IDENTITY_LABEL }}</p>
+      <p class="sp-hero-location" id="sp-hero-location">
+        {% if learner_profile.location %}<i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ learner_profile.location }}{% else %}<span class="sp-muted">Add your location</span>{% endif %}
+      </p>
+      <button type="button" class="btn btn-primary sp-hero-cta sp-btn-violet" data-open-section-modal="basic" aria-haspopup="dialog">
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Edit photo &amp; identity
+      </button>
+    </div>
+    <div class="sp-hero-right">
+      <div class="sp-hero-stat-block">
+        <span class="sp-hero-stat-label">Profile strength</span>
+        <div class="sp-hero-pct" id="sp-hero-completion"><strong>{{ learner_profile.profile_completion }}%</strong></div>
+        <div class="profile-progress-bar sp-hero-progress" role="progressbar" aria-valuenow="{{ learner_profile.profile_completion }}" aria-valuemin="0" aria-valuemax="100">
+          <span class="profile-progress-fill" id="sp-hero-progress-fill" style="width: {{ learner_profile.profile_completion }}%;"></span>
+        </div>
+      </div>
+      <div class="sp-badge-wrap">
+        <span class="sp-badge-label">Level</span>
+        <span class="learner-badge {{ learner_badge_class }} sp-badge-pill" id="sp-dashboard-badge">{{ dashboard_badge_label }}</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,95 @@
+{% load static %}
+{# Sticky CTA + WhatsApp, data for JS #}
+<div id="lms-conversion-config" hidden
+     data-lead-url="{% url 'lms:lead_capture' %}"
+     data-track-url="{% url 'lms:track_event' %}"
+     data-ref-url="{% url 'lms:ref_session' %}"
+     data-course-list-url="{% url 'lms:course_list' %}"
+     data-ab-variant="{{ LMS_AB_VARIANT|default:'a' }}"
+     data-activity-url="{% url 'lms:activity_feed' %}"
+     data-activity-enabled="{% if LMS_LIVE_ACTIVITY_ENABLED %}1{% else %}0{% endif %}">
+</div>
+
+<div id="lms-upsell-modal" class="lead-modal upsell-modal" aria-hidden="true">
+  <div class="lead-modal-backdrop js-close-upsell"></div>
+  <div class="lead-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="upsell-title">
+    <button type="button" class="login-modal-close js-close-upsell" aria-label="Close">&times;</button>
+    <div class="lead-modal-body">
+      <h2 id="upsell-title" class="login-modal-title"></h2>
+      <p id="upsell-body" class="login-modal-subtitle"></p>
+      <a id="upsell-cta" href="#" class="btn btn-primary btn-block" target="_blank" rel="noopener"></a>
+      <button type="button" class="btn btn-outline btn-block js-close-upsell">Continue to course</button>
+    </div>
+  </div>
+</div>
+
+<div id="lms-pricing-popover" class="lms-pricing-popover" role="tooltip" aria-hidden="true">
+  <strong>Limited offer</strong>
+  <p>Lock in today’s price. Quiz-based progression + verified certificate.</p>
+  <a href="{% url 'lms:course_list' %}#enroll" class="btn btn-primary btn-sm">Enroll now</a>
+</div>
+
+{% if LMS_WHATSAPP_NUMBER %}
+<a href="https://wa.me/{{ LMS_WHATSAPP_NUMBER }}?text={{ LMS_WHATSAPP_MESSAGE|urlencode }}"
+   class="lms-whatsapp-float"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Chat on WhatsApp">
+  <i class="fab fa-whatsapp" aria-hidden="true"></i>
+</a>
+{% endif %}
+
+{% if LMS_SHOW_STICKY_ENROLL_BAR %}
+<div class="lms-sticky-cta" id="lms-sticky-cta" role="region" aria-label="Quick enroll">
+  <div class="lms-sticky-cta-inner">
+    <span class="lms-sticky-cta-offer">
+      <strong>₹{{ LMS_COURSE_PRICE_DISPLAY }}</strong>
+      {% if LMS_ORIGINAL_PRICE_INR %}
+      <s class="lms-strike">₹{{ LMS_ORIGINAL_PRICE_INR }}</s>
+      {% endif %}
+    </span>
+    <a href="{% url 'lms:course_list' %}#enroll" class="btn btn-primary btn-sm lms-sticky-enroll">Enroll now</a>
+    {% if LMS_WHATSAPP_NUMBER %}
+    <a href="https://wa.me/{{ LMS_WHATSAPP_NUMBER }}?text={{ LMS_WHATSAPP_MESSAGE|urlencode }}"
+       class="btn btn-outline btn-sm" target="_blank" rel="noopener">WhatsApp</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{# Lead magnet + exit intent modal #}
+<div id="lead-modal" class="lead-modal" aria-hidden="true">
+  <div class="lead-modal-backdrop js-close-lead-modal"></div>
+  <div class="lead-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="lead-modal-title">
+    <button type="button" class="login-modal-close js-close-lead-modal" aria-label="Close">&times;</button>
+    <div class="lead-modal-body">
+      <h2 id="lead-modal-title" class="login-modal-title">Get free AI prompts</h2>
+      <p class="login-modal-subtitle">We send your free prompt pack on <strong>WhatsApp</strong>. Add email if you want inbox updates too.</p>
+      <div class="lead-modal-messages" id="lead-modal-messages" role="alert"></div>
+      <form id="lead-capture-form" class="lead-form lead-form-pro" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="source" id="lead-source-input" value="lead_magnet">
+        <div class="form-group lead-form-group">
+          <label for="lead-name" class="lead-form-label">Name</label>
+          <input type="text" id="lead-name" name="name" class="lead-form-input" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="form-group lead-form-group">
+          <label for="lead-phone" class="lead-form-label">WhatsApp number <span class="req" aria-hidden="true">*</span></label>
+          <input type="tel" id="lead-phone" name="phone" class="lead-form-input lead-form-input-phone" inputmode="tel" placeholder="e.g. 9876543210 or 919876543210" autocomplete="tel" required aria-required="true">
+          <span class="lead-form-hint">10–15 digits (India: 10 digits or 91 + 10)</span>
+        </div>
+        <div class="form-group lead-form-group">
+          <label for="lead-email" class="lead-form-label">Email <span class="lead-form-optional">(optional)</span></label>
+          <input type="email" id="lead-email" name="email" class="lead-form-input" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block lead-form-submit">Send me the prompts</button>
+      </form>
+      {% if LMS_MENTOR_URL %}
+      <div class="lead-modal-mentor" id="lead-modal-mentor-row" hidden>
+        <p class="lead-modal-mentor-text">Rather talk to someone?</p>
+        <a href="{{ LMS_MENTOR_URL }}" class="btn btn-outline btn-block" target="_blank" rel="noopener noreferrer">{{ LMS_MENTOR_CTA }}</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

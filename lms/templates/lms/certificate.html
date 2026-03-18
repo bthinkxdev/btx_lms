@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Certificate {{ certificate.certificate_id }} – BThinkX{% endblock %}
+{% block content %}
+<div class="verify-page">
+    <div class="verify-container">
+        <div class="certificate-verification">
+            <div style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-blue) 100%); color: var(--white); border-radius: 16px 16px 0 0; margin: -2rem -2rem 2rem -2rem;">
+                <h1 style="margin-bottom: 0.5rem; font-weight: 700;">Certificate of Completion</h1>
+                <p style="opacity: 0.95;">ID: {{ certificate.certificate_id }}</p>
+            </div>
+
+            <div style="text-align: center; padding: 2rem; background: var(--bg-light); border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border-color);">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-dark);">
+                    This certifies that <strong style="color: var(--primary-color); font-weight: 700;">{{ certificate.user.get_full_name|default:certificate.user.username }}</strong> 
+                    has successfully completed 
+                    <strong style="color: var(--primary-color); font-weight: 700;">{{ certificate.course.title }}</strong> 
+                    on {{ certificate.created_at|date:"F j, Y" }}.
+                </p>
+            </div>
+
+            {% if qr_data %}
+                <div class="qr-code-display">
+                    <h3>Verification QR Code</h3>
+                    <img src="data:image/png;base64,{{ qr_data }}" alt="QR code for verification" class="qr-code">
+                    <p style="color: var(--text-light); margin-top: 0.5rem;">Scan to verify authenticity</p>
+                </div>
+            {% endif %}
+
+            <div class="cert-share-row">
+                <p class="cert-share-label">Public verify link (share with employers):</p>
+                <div class="cert-share-url-wrap">
+                    <input type="text" readonly class="cert-share-input" id="cert-public-url" value="{{ certificate_public_url }}">
+                    <button type="button" class="btn btn-outline btn-sm" id="cert-copy-link">Copy link</button>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.25rem; flex-wrap: wrap; justify-content: center;">
+                <a href="{{ linkedin_share_url }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin" aria-hidden="true"></i> Share on LinkedIn</a>
+                <a href="{% url 'lms:certificate_download' certificate_id=certificate.certificate_id %}" class="btn btn-outline">Download PDF</a>
+                <a href="{% url 'lms:dashboard_course' slug=certificate.course.slug %}" class="btn btn-outline">Back to Course</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

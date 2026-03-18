@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Courses – BThinkX{% endblock %}
+{% block body_attr %} class="cl-page"{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# ── Hero ────────────────────────────────────────────────────── #}
+<div class="cl-hero">
+  <div class="cl-hero__inner">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+      <span class="cl-hero__eyebrow">
+        <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+        BThinkX Programs
+      </span>
+      <h1 class="cl-hero__title">All Courses</h1>
+      <p class="cl-hero__subtitle">Structured learning paths designed for real career outcomes. Quiz-gated daily progression with verified credentials.</p>
+    </div>
+  </div>
+</div>
+
+{# ── Promo video (autoplay muted) ───────────────────────────── #}
+<div class="cl-video-banner">
+  <div class="cl-video-banner__inner">
+    <video
+      class="cl-courses-page-video lms-autoplay-muted-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      controls
+      preload="auto"
+      poster="https://via.placeholder.com/960x540/6440FB/ffffff?text=Program+preview"
+      controlsList="nodownload noplaybackrate"
+      disablePictureInPicture
+      aria-label="Program preview. Plays muted; use controls to unmute.">
+      {% if courses_page_video_url %}
+      <source src="{{ courses_page_video_url }}" type="video/mp4">
+      {% else %}
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+      {% endif %}
+      Your browser does not support the video tag.
+    </video>
+    <p class="cl-video-banner__caption">Preview the learning experience, tap controls to unmute.</p>
+  </div>
+</div>
+
+{# ── Course grid ─────────────────────────────────────────────── #}
+<div class="cl-body">
+
+  {% if course_list %}
+  <div class="cl-grid">
+    {% for course in course_list %}
+    <article class="cl-course-card">
+
+      {# Thumbnail #}
+      {% if course.thumbnail %}
+      <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="cl-course-card__thumb" loading="lazy">
+      {% else %}
+      <div class="cl-course-card__thumb-ph" aria-hidden="true">
+        {{ course.title|slice:":1"|upper }}
+      </div>
+      {% endif %}
+
+      {# Body #}
+      <div class="cl-course-card__body">
+
+        {# Badges #}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <span class="pg-badge pg-badge--violet">
+            <i class="fa-solid fa-award" aria-hidden="true"></i> CPEP Certified
+          </span>
+          {% if course.modules.count %}
+          <span class="pg-badge pg-badge--grey">
+            {{ course.modules.count }} modules
+          </span>
+          {% endif %}
+        </div>
+
+        <h3 class="cl-course-card__title">{{ course.title }}</h3>
+
+        <p class="cl-course-card__desc">
+          {% if course.description %}{{ course.description|truncatewords:22 }}{% else %}Industry-ready skills in a structured, quiz-gated learning path with a verified credential.{% endif %}
+        </p>
+
+        <div class="cl-course-card__meta">
+          <span class="cl-course-card__meta-item">
+            <i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
+            7 days
+          </span>
+          <span class="cl-course-card__meta-item">
+            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+            Quiz-unlock
+          </span>
+          <span class="cl-course-card__meta-item">
+            <i class="fa-solid fa-certificate" aria-hidden="true"></i>
+            Certificate
+          </span>
+        </div>
+
+        <div class="cl-course-card__footer">
+          <div>
+            {% if course.price is not None and course.price > 0 %}
+            <div class="cl-course-card__price">
+              ₹{{ course.price|floatformat:0 }}
+            </div>
+            {% else %}
+            <span class="pg-badge pg-badge--green">Free</span>
+            {% endif %}
+          </div>
+          <a href="{% url 'lms:course_detail' slug=course.slug %}" class="pg-btn pg-btn--primary pg-btn--sm" id="enroll">
+            View &amp; Enroll
+          </a>
+        </div>
+
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="pg-empty" style="padding:80px 20px;">
+    <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+    <p>No courses available yet, check back soon.</p>
+  </div>
+  {% endif %}
+
+  {# Pagination #}
+  {% if page_obj.has_other_pages %}
+  <nav class="pagination" aria-label="Course pagination"
+       style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:48px;">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="pg-btn pg-btn--ghost pg-btn--sm">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous
+    </a>
+    {% endif %}
+    <span style="font-size:0.85rem;color:var(--p-grey-500);font-weight:600;">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="pg-btn pg-btn--ghost pg-btn--sm">
+      Next <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+    </a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+</div>
+
+{% endblock %}

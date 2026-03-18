@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% load lms_extras %}
+{% block title %}{{ course.title }} – BThinkX{% endblock %}
+{% block content %}
+<div class="course-detail-page">
+    <!-- Breadcrumb -->
+    <div class="course-detail-breadcrumb">
+        <div class="course-detail-container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="{% url 'lms:home' %}">Home</a>
+                <span class="breadcrumb-sep" aria-hidden="true">/</span>
+                <a href="{% url 'lms:course_list' %}">Course</a>
+                <span class="breadcrumb-sep" aria-hidden="true">/</span>
+                <span aria-current="page">{{ course.title|truncatewords:6 }}</span>
+            </nav>
+        </div>
+    </div>
+
+    <div class="course-detail-container course-detail-layout">
+        <!-- Main content (left) -->
+        <div class="course-detail-main">
+            <header class="course-detail-head">
+                <div class="course-urgency-banner">
+                    <span class="course-urgency-pill"><i class="fas fa-fire" aria-hidden="true"></i> Limited-time offer</span>
+                    {% if LMS_OFFER_COUNTDOWN_ISO %}
+                    <span class="course-countdown" data-end="{{ LMS_OFFER_COUNTDOWN_ISO }}" id="course-countdown">Ends in <strong class="cd-digits">--:--:--</strong></span>
+                    {% endif %}
+                    <span class="course-seats-text">{{ LMS_LIMITED_SEATS_TEXT }}{% if LMS_SEATS_LEFT != None %} · Only {{ LMS_SEATS_LEFT }} seats left{% endif %}</span>
+                </div>
+                <h1 class="course-detail-title">{{ course.title }}</h1>
+                <p class="course-detail-subtitle">7-day path to {{ LMS_IDENTITY_LABEL }} skills • Quiz-gated progression • CPEP certification</p>
+                <div class="course-detail-badges">
+                    <span class="course-badge">7 days</span>
+                    <span class="course-badge">{{ course.modules.count }} modules</span>
+                    <span class="course-badge">Certificate of completion</span>
+                </div>
+            </header>
+
+            <section class="course-outcomes-block" aria-labelledby="outcomes-h">
+                <h2 id="outcomes-h" class="course-detail-h2">What you’ll walk away with</h2>
+                <ul class="course-outcome-bullets">
+                    <li>Prompt patterns for work, job search &amp; freelancing, ready to reuse</li>
+                    <li>Faster research, writing, code help &amp; client comms using AI</li>
+                    <li>Daily quiz progression so you actually finish (no passive watching)</li>
+                    <li>Pass the exam → <strong>instant CPEP certificate</strong> + shareable verify link</li>
+                </ul>
+            </section>
+
+            <section class="course-earnings-block" aria-labelledby="earn-h">
+                <h2 id="earn-h" class="course-detail-h2">Earnings &amp; career upside</h2>
+                <p>Prompt skills compound: save hours weekly at work, pitch better as a freelancer, or stand out in hiring. Many learners use the included resume &amp; LinkedIn prompts to refresh their profile in one sitting.</p>
+            </section>
+
+            <section class="course-usecases-block" aria-labelledby="use-h">
+                <h2 id="use-h" class="course-detail-h2">Real-world use cases</h2>
+                <ul class="course-usecase-list">
+                    <li><strong>Developers:</strong> debug faster, document APIs, draft PR descriptions</li>
+                    <li><strong>HR / ops:</strong> JDs, interview guides, policy drafts</li>
+                    <li><strong>Marketing:</strong> campaigns, personas, email sequences</li>
+                    <li><strong>Job seekers:</strong> ATS resumes, cover letters, interview prep</li>
+                </ul>
+            </section>
+
+            <section class="course-instructor-block" aria-labelledby="inst-h">
+                <h2 id="inst-h" class="course-detail-h2">Why trust this program</h2>
+                <p>BThinkX delivers structured, outcome-based AI training. This course is built around <strong>quiz-gated daily unlocks</strong> and a <strong>verified certificate</strong>, so your progress is real and provable.</p>
+            </section>
+
+            <section class="course-bonus-block" aria-labelledby="bonus-h">
+                <h2 id="bonus-h" class="course-detail-h2">Bonuses</h2>
+                <ul>
+                    <li>Free AI prompt pack when you join the list (lead magnet)</li>
+                    <li>WhatsApp support for course questions</li>
+                    <li>Public certificate verification for employers</li>
+                </ul>
+            </section>
+
+            {% if preview_lessons %}
+            <section class="course-preview-block" aria-labelledby="preview-h">
+                <h2 id="preview-h" class="course-detail-h2">Try a free lesson</h2>
+                <p class="course-preview-intro">Watch a full sample with no login, then enroll for the full path.</p>
+                <ul class="course-preview-list">
+                    {% for pl in preview_lessons %}
+                    <li>
+                        <span class="preview-lesson-badge">Free</span>
+                        <strong>{{ pl.title }}</strong>
+                        <span class="preview-lesson-meta">Day {{ pl.module.release_day }}</span>
+                        <a href="{% url 'lms:lesson_preview' slug=course.slug lesson_id=pl.pk %}" class="btn btn-outline btn-sm">Watch free lesson</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+            {% include "lms/partials/proof_real_results.html" %}
+
+            <!-- Course content (collapsible DAY sections from description) -->
+            {% with day_sections=course.description|course_day_sections %}
+            {% if day_sections %}
+            <section class="course-detail-curriculum" aria-labelledby="curriculum-heading">
+                <div class="curriculum-head">
+                    <h2 id="curriculum-heading" class="course-detail-h2">Course content</h2>
+                    <p class="curriculum-summary">{{ course.modules.count }} sections • Day 7: Final exam + certification</p>
+                </div>
+                <div class="curriculum-accordion">
+                    {% for section in day_sections %}
+                    <details class="curriculum-section{% if section.day == 7 %} curriculum-section-exam{% endif %}" {% if forloop.first %}open{% endif %}>
+                        <summary class="curriculum-section-summary">
+                            <span class="curriculum-section-title">
+                                {% if section.day == 0 %}About this program{% else %}Day {{ section.day }}: {{ section.title }}{% endif %}
+                            </span>
+                        </summary>
+                        <div class="curriculum-section-body curriculum-section-rich">
+                            {{ section.content|linebreaks }}
+                        </div>
+                    </details>
+                    {% endfor %}
+                </div>
+            </section>
+            {% else %}
+            <section class="course-detail-curriculum" aria-labelledby="curriculum-heading">
+                <div class="curriculum-head">
+                    <h2 id="curriculum-heading" class="course-detail-h2">Course content</h2>
+                    <p class="curriculum-summary">
+                        {{ course.modules.count }} sections • Day 7: Final exam + certification
+                    </p>
+                </div>
+                <div class="curriculum-accordion">
+                    {% for module in course.modules.all %}
+                    <details class="curriculum-section" {% if forloop.first %}open{% endif %}>
+                        <summary class="curriculum-section-summary">
+                            <span class="curriculum-section-title">
+                                Day {{ module.release_day }}: {{ module.title }}
+                            </span>
+                            <span class="curriculum-section-meta">
+                                {{ module.lessons.count }} lesson{{ module.lessons.count|pluralize }}
+                            </span>
+                        </summary>
+                        <div class="curriculum-section-body curriculum-section-rich">
+                            {% if module.description %}
+                                <p>{{ module.description }}</p>
+                            {% else %}
+                                <p>Core video lesson and 10-question quiz for this day.</p>
+                            {% endif %}
+                            {% if module.lessons.exists %}
+                                <ul>
+                                    {% for lesson in module.lessons.all %}
+                                        <li>{{ lesson.title }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </details>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+            {% endwith %}
+
+            {% if course.modules.exists %}
+            <!-- Full modules overview (collapsible, below Course content) -->
+            <section class="course-detail-curriculum course-detail-modules-overview" aria-labelledby="modules-heading">
+                <div class="curriculum-head">
+                    <h2 id="modules-heading" class="course-detail-h2">Full modules overview</h2>
+                    <p class="curriculum-summary">
+                        {{ course.modules.count }} day-wise modules covering foundations, productivity, careers and ethics.
+                    </p>
+                </div>
+                <div class="curriculum-accordion">
+                    {% for module in course.modules.all %}
+                    <details class="curriculum-section" {% if forloop.first %}open{% endif %}>
+                        <summary class="curriculum-section-summary">
+                            <span class="curriculum-section-title">
+                                Day {{ module.release_day }}: {{ module.title }}
+                            </span>
+                            <span class="curriculum-section-meta">
+                                {{ module.lessons.count }} lesson{{ module.lessons.count|pluralize }}
+                            </span>
+                        </summary>
+                        <div class="curriculum-section-body curriculum-section-rich">
+                            {% if module.description %}
+                                <p>{{ module.description }}</p>
+                            {% else %}
+                                <p>Core video lesson and quiz focused on this day&rsquo;s topic.</p>
+                            {% endif %}
+                            {% if module.lessons.exists %}
+                                <ul>
+                                    {% for lesson in module.lessons.all %}
+                                        <li>{{ lesson.title }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </details>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- About / overview block (now below curriculum) -->
+            <section class="course-detail-about">
+                <h2 class="course-detail-h2">About this program</h2>
+                <p>
+                    A practical 7-day program that helps you build an AI-first mindset,
+                    design high‑quality prompts, and apply AI to your real work, job search,
+                    and projects. Each day focuses on one outcome so you make measurable
+                    progress in just one week.
+                </p>
+                <div class="course-detail-about-grid">
+                    <div class="course-detail-about-column">
+                        <h3 class="course-detail-h3">Who it’s for</h3>
+                        <ul>
+                            <li>Working professionals who want to save 30–50% time on daily tasks.</li>
+                            <li>Job seekers and students who want stronger resumes, LinkedIn profiles, and interviews.</li>
+                            <li>Freelancers and founders who want better proposals, client communication, and content.</li>
+                        </ul>
+                    </div>
+                    <div class="course-detail-about-column">
+                        <h3 class="course-detail-h3">What you’ll be able to do</h3>
+                        <ul>
+                            <li>Write structured prompts for coding, writing, research, and decision-making.</li>
+                            <li>Create portfolio-ready prompt examples for your role or domain.</li>
+                            <li>Use chain-of-thought, role prompts, and advanced patterns safely and ethically.</li>
+                            <li>Prepare for the Day 7 exam and earn your CPEP credential.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar (right) - sticky enrollment card -->
+        <aside class="course-detail-sidebar" aria-label="Enrollment">
+            <div class="course-detail-card" id="enroll">
+                <div class="course-detail-card-preview course-detail-card-preview-video">
+                    <video
+                        class="course-preview-video lms-autoplay-muted-video"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        controls
+                        preload="auto"
+                        poster="https://via.placeholder.com/400x225/6440FB/ffffff?text=Preview"
+                        controlsList="nodownload noplaybackrate"
+                        disablePictureInPicture
+                        disableRemotePlayback
+                        oncontextmenu="return false;"
+                        aria-label="Program preview. Plays muted; use controls to unmute.">
+                        {% if course_preview_video_url %}
+                        <source src="{{ course_preview_video_url }}" type="video/mp4">
+                        {% else %}
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
+                        {% endif %}
+                        Your browser does not support the video tag.
+                    </video>
+                    <span class="course-preview-label">Preview this program</span>
+                </div>
+                <div class="course-detail-card-body">
+                    <div class="course-detail-price lms-pricing-hover">
+                        <div class="course-price-stack">
+                            <div class="course-price-line">
+                                {% if course.price is not None and course.price > 0 %}
+                                <s class="course-price-was">₹{{ LMS_ORIGINAL_PRICE_INR|default:4999 }}</s>
+                                <span class="course-price-current">₹{{ course.price|floatformat:0 }}</span>
+                                {% else %}
+                                <s class="course-price-was">₹{{ LMS_ORIGINAL_PRICE_INR|default:4999 }}</s>
+                                <span class="course-price-current">₹{{ LMS_COURSE_PRICE_INR|default:2499 }}</span>
+                                {% endif %}
+                            </div>
+                            <span class="course-price-save">Save ₹{{ LMS_SAVINGS_INR }}</span>
+                        </div>
+                    </div>
+                    <div class="course-detail-enroll">
+                        {% if is_enrolled %}
+                        <span class="status-enrolled">✓ You are enrolled</span>
+                        <a href="{% url 'lms:dashboard_course' slug=course.slug %}" class="btn btn-primary btn-block">Go to Dashboard</a>
+                        {% else %}
+                        {% if user.is_authenticated %}
+                        <button type="button"
+                                class="btn btn-primary btn-block js-razorpay-enroll"
+                                data-course-slug="{{ course.slug }}"
+                                data-course-title="{{ course.title }}"
+                                data-amount-display="{% if course.price and course.price > 0 %}{{ course.price|floatformat:0 }}{% else %}{{ LMS_COURSE_PRICE_INR|default:2499 }}{% endif %}">
+                            Pay &amp; Enroll
+                        </button>
+                        {% else %}
+                        <button type="button"
+                                class="btn btn-primary btn-block js-open-enroll-flow"
+                                data-course-slug="{{ course.slug }}"
+                                data-amount-display="{% if course.price and course.price > 0 %}{{ course.price|floatformat:0 }}{% else %}{{ LMS_COURSE_PRICE_INR|default:2499 }}{% endif %}">
+                            Enroll now · pay securely
+                        </button>
+                        <button type="button" class="btn btn-outline btn-block js-open-lead-modal" data-source="course_sidebar">Get free prompts first</button>
+                        {% endif %}
+                        {% endif %}
+                        {% if LMS_MENTOR_URL and not is_enrolled %}
+                        <a href="{{ LMS_MENTOR_URL }}" class="btn btn-outline btn-block course-mentor-cta" target="_blank" rel="noopener noreferrer">{{ LMS_MENTOR_CTA }}</a>
+                        {% endif %}
+                    </div>
+                    <ul class="course-detail-guarantees">
+                        <li><i class="fas fa-check-circle" aria-hidden="true"></i> Full access to all modules</li>
+                        <li><i class="fas fa-check-circle" aria-hidden="true"></i> CPEP certificate on passing</li>
+                        <li><i class="fas fa-check-circle" aria-hidden="true"></i> Shareable credential</li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

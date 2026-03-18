@@ -1,0 +1,23 @@
+<section class="sp-certs dashboard-card sp-card-elevated" aria-labelledby="sp-certs-heading">
+  <h2 class="card-title" id="sp-certs-heading">Certificates</h2>
+  {% if user_certificates %}
+    <div class="sp-cert-grid">
+      {% for cert in user_certificates %}
+        <article class="sp-cert-card">
+          <div class="sp-cert-card-icon" aria-hidden="true"><i class="fa-solid fa-certificate"></i></div>
+          <h3 class="sp-cert-course">{{ cert.course.title }}</h3>
+          <p class="sp-cert-id"><code>{{ cert.certificate_id }}</code></p>
+          <div class="sp-cert-actions">
+            <a href="{% url 'lms:certificate_detail' certificate_id=cert.certificate_id %}" class="btn btn-outline btn-sm">View</a>
+            {% if cert.pdf_file %}
+              <a href="{% url 'lms:certificate_download' certificate_id=cert.certificate_id %}" class="btn btn-outline btn-sm">Download</a>
+            {% endif %}
+            <a href="{% url 'lms:verify' certificate_id=cert.certificate_id %}" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Verify</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="sp-muted sp-cert-empty">Complete a course exam to earn certificates, they’ll show up here.</p>
+  {% endif %}
+</section>

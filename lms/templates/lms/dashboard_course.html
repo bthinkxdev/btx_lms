@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load lms_extras %}
+{% block title %}{{ course.title }} – My Hub{% endblock %}
+{% block body_attr %} class="cd-page"{% endblock %}
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# ── Hero ──────────────────────────────────────────────────── #}
+<div class="cd-hero">
+  <div class="cd-hero__inner">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+      <nav class="cd-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'lms:dashboard' %}"><i class="fa-solid fa-house-chimney" aria-hidden="true"></i> My Hub</a>
+        <span aria-hidden="true">›</span>
+        <span>{{ course.title }}</span>
+      </nav>
+      <h1 class="cd-hero__title">{{ course.title }}</h1>
+      <div class="cd-hero__meta">
+        <span class="cd-hero__stat">
+          <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+          {{ course.modules.all|length }} modules
+        </span>
+        <span class="cd-hero__stat {% if day_streak > 0 %}cd-hero__stat--fire{% endif %}">
+          <i class="fa-solid fa-fire" aria-hidden="true"></i>
+          {{ day_streak }} day streak
+        </span>
+        <span class="cd-hero__stat">
+          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+          {% if total_lessons > 0 %}{{ completed_lessons }}% complete{% else %}Not started{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── Body layout ───────────────────────────────────────────── #}
+<div class="cd-layout">
+
+  {# ── Main column ── #}
+  <main>
+
+    {# Demo video #}
+    {% if demo_video_url %}
+    <div class="cd-video-wrap">
+      <video controls preload="metadata" src="{{ demo_video_url }}"
+             controlsList="nodownload" disablePictureInPicture
+             oncontextmenu="return false;" aria-label="Course intro video">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    {% endif %}
+
+    {# Next action CTA #}
+    {% if next_action_url and next_action_label %}
+    <div class="cd-cta-bar">
+      <span class="cd-cta-bar__text">
+        <i class="fa-solid fa-circle-play" aria-hidden="true" style="color:var(--p-violet);margin-right:6px;"></i>
+        Ready to continue? <span>Pick up where you left off.</span>
+      </span>
+      <a href="{{ next_action_url }}" class="pg-btn pg-btn--primary">
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        {{ next_action_label }}
+      </a>
+    </div>
+    {% endif %}
+
+    {# Overall progress #}
+    <div class="cd-progress-card">
+      <div class="cd-progress-card__header">
+        <h2 class="cd-progress-card__title">
+          <i class="fa-solid fa-chart-pie" style="color:var(--p-violet);margin-right:8px;" aria-hidden="true"></i>
+          Overall Progress
+        </h2>
+        <span class="cd-progress-card__pct">
+          {% if total_lessons > 0 %}{{ completed_lessons }}%{% else %}0%{% endif %}
+        </span>
+      </div>
+      <div class="pg-progress-wrap" role="progressbar"
+           aria-valuenow="{% if total_lessons > 0 %}{{ completed_lessons }}{% else %}0{% endif %}"
+           aria-valuemin="0" aria-valuemax="100">
+        <div class="pg-progress-fill"
+             style="width:{% if total_lessons > 0 %}{{ completed_lessons }}{% else %}0{% endif %}%"></div>
+      </div>
+      <p style="font-size:0.78rem;color:var(--p-grey-500);margin-top:10px;">
+        Complete each day's quiz (score 6/10+) to unlock the next module.
+      </p>
+    </div>
+
+    {# Day modules #}
+    <div style="margin-bottom:8px;">
+      <div class="pg-sec-head">
+        <h2 class="pg-sec-title">Course Modules</h2>
+        <span style="font-size:0.78rem;color:var(--p-grey-500);">{{ course.modules.all|length }} days</span>
+      </div>
+    </div>
+
+    <div class="cd-modules">
+      {% for module in course.modules.all %}
+      <details class="cd-module" {% if forloop.first %}open{% endif %}>
+        <summary class="cd-module__head">
+          <div class="cd-module__day-badge {% if module.release_day in passed_quiz_days %}cd-module__day-badge--done{% endif %}">
+            {% if module.release_day in passed_quiz_days %}
+              <i class="fa-solid fa-check" aria-hidden="true"></i>
+            {% else %}
+              D{{ module.release_day }}
+            {% endif %}
+          </div>
+          <div class="cd-module__info">
+            <h3 class="cd-module__title">Day {{ module.release_day }}: {{ module.title }}</h3>
+            {% if module.description %}<p class="cd-module__desc">{{ module.description }}</p>{% endif %}
+          </div>
+          {% if module.release_day in passed_quiz_days %}
+          <span class="cd-module__check" title="Day quiz passed" aria-label="Passed">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          </span>
+          {% endif %}
+          <i class="fa-solid fa-chevron-right cd-module__chevron" aria-hidden="true"></i>
+        </summary>
+
+        <div class="cd-lessons">
+          {% for lesson in module.lessons.all %}
+          <div class="cd-lesson">
+            {% if lesson.pk in unlocked_lesson_ids %}
+            <div class="cd-lesson__icon cd-lesson__icon--unlocked" aria-hidden="true">
+              <i class="fa-solid fa-circle-play"></i>
+            </div>
+            <div class="cd-lesson__info">
+              <p class="cd-lesson__title">{{ lesson.title }}</p>
+              {% if lesson.duration_seconds %}
+              <p class="cd-lesson__hint">
+                <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                {{ lesson.duration_seconds|floatformat:0 }}s
+              </p>
+              {% endif %}
+            </div>
+            <a href="{% url 'lms:lesson' slug=course.slug lesson_id=lesson.pk %}"
+               class="pg-btn pg-btn--outline pg-btn--sm">
+              Start
+            </a>
+            {% else %}
+            <div class="cd-lesson__icon cd-lesson__icon--locked" aria-hidden="true">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="cd-lesson__info">
+              <p class="cd-lesson__title cd-lesson__title--locked">{{ lesson.title }}</p>
+              <p class="cd-lesson__hint">
+                {{ lesson_unlock_messages|get_item:lesson.pk|default:"Pass the previous day's quiz (6/10+) to unlock." }}
+              </p>
+            </div>
+            {% endif %}
+          </div>
+          {% empty %}
+          <div class="pg-empty"><p>No lessons in this module yet.</p></div>
+          {% endfor %}
+        </div>
+      </details>
+      {% empty %}
+      <div class="pg-empty">
+        <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+        <p>No modules available yet.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+  </main>
+
+  {# ── Sidebar ── #}
+  <aside class="cd-sidebar">
+
+    {# Certificate #}
+    <div>
+      {% if certificate %}
+      <div class="cd-cert-card">
+        <div class="cd-cert-card__icon" aria-hidden="true">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <p class="cd-cert-card__title">Certificate Earned!</p>
+        <p class="cd-cert-card__id">{{ certificate.certificate_id }}</p>
+        <p style="font-size:0.78rem;color:var(--p-grey-500);margin-bottom:14px;">
+          Issued {{ certificate.created_at|date:"M j, Y" }}
+        </p>
+        <div class="cd-cert-card__actions">
+          <a href="{% url 'lms:certificate_detail' certificate_id=certificate.certificate_id %}"
+             class="pg-btn pg-btn--primary pg-btn--sm">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i> View
+          </a>
+          <a href="{% url 'lms:certificate_download' certificate_id=certificate.certificate_id %}"
+             class="pg-btn pg-btn--outline pg-btn--sm">
+            <i class="fa-solid fa-download" aria-hidden="true"></i> PDF
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <div class="cd-side-card">
+        <p class="cd-side-card__title"><i class="fa-solid fa-award" aria-hidden="true"></i> Certificate</p>
+        <div class="cd-cert-pending">
+          <i class="fa-regular fa-certificate" aria-hidden="true"></i>
+          <p>Complete all requirements &amp; pass the exam to earn your CPEP certificate.</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {# Exams #}
+    <div class="cd-side-card">
+      <p class="cd-side-card__title"><i class="fa-solid fa-file-pen" aria-hidden="true"></i> Exams</p>
+      {% for exam, result in exams_with_results %}
+      <div class="cd-exam">
+        <p class="cd-exam__title">{{ exam.title }}</p>
+        <p class="cd-exam__meta">
+          {% if exam.duration_minutes %}{{ exam.duration_minutes }} min{% endif %}
+          {% if exam.passing_score %} · Pass: {{ exam.passing_score }}%{% endif %}
+        </p>
+        {% if result %}
+        <span class="cd-exam__result {% if result.passed %}cd-exam__result--pass{% else %}cd-exam__result--fail{% endif %}">
+          {{ result.score }}% · {% if result.passed %}Passed{% else %}Failed{% endif %}
+        </span>
+        {% else %}
+        <div style="margin-top:6px;">
+          <a href="{% url 'lms:exam_detail' slug=course.slug exam_slug=exam.slug %}"
+             class="pg-btn pg-btn--primary pg-btn--sm" style="width:100%;justify-content:center;">
+            <i class="fa-solid fa-pen" aria-hidden="true"></i> Take Exam
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div class="pg-empty"><p>No exams yet.</p></div>
+      {% endfor %}
+    </div>
+
+    {# Quick stats #}
+    <div class="cd-side-card">
+      <p class="cd-side-card__title"><i class="fa-solid fa-chart-bar" aria-hidden="true"></i> Quick Stats</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="text-align:center;padding:12px;background:var(--p-grey-50);border-radius:10px;">
+          <div style="font-size:1.6rem;font-weight:900;color:var(--p-violet);letter-spacing:-0.04em;">{{ day_streak }}</div>
+          <div style="font-size:0.7rem;font-weight:600;color:var(--p-grey-500);text-transform:uppercase;margin-top:4px;">Day Streak</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:var(--p-grey-50);border-radius:10px;">
+          <div style="font-size:1.6rem;font-weight:900;color:var(--p-green);letter-spacing:-0.04em;">{% if total_lessons > 0 %}{{ completed_lessons }}{% else %}0{% endif %}%</div>
+          <div style="font-size:0.7rem;font-weight:600;color:var(--p-grey-500);text-transform:uppercase;margin-top:4px;">Complete</div>
+        </div>
+      </div>
+      {% if day_streak > 0 %}
+      <div class="pg-info-box" style="margin-top:14px;">
+        <i class="fa-solid fa-fire" style="color:#fb923c;" aria-hidden="true"></i>
+        <span>Keep going, you're on a <strong>{{ day_streak }}-day streak!</strong></span>
+      </div>
+      {% endif %}
+    </div>
+
+    {# Back link #}
+    <a href="{% url 'lms:dashboard' %}" class="pg-btn pg-btn--ghost" style="width:100%;justify-content:center;">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      Back to My Hub
+    </a>
+
+  </aside>
+</div>
+
+{% endblock %}

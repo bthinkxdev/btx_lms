@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Login – BThinkX{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Login to Your Account</h1>
+    </div>
+</div>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-form-card">
+            {% if form.errors %}
+                <div class="alert alert-error">
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+            <form method="post" action="{% url 'login' %}" data-loader-message="Signing in…">
+                {% csrf_token %}
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="id_username" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">Username</label>
+                    <input type="text" name="username" id="id_username" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem;" required autofocus>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="id_password" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark);">Password</label>
+                    <input type="password" name="password" id="id_password" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem;" required>
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                <p style="color: var(--text-light);">Don't have an account? <a href="{% url 'lms:register' %}" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Sign Up</a></p>
+                <p><a href="{% url 'lms:home' %}" style="color: var(--text-light); text-decoration: none;">Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

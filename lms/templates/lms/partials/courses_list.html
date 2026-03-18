@@ -1,0 +1,38 @@
+<section class="sp-courses dashboard-card sp-card-elevated" id="my-courses" aria-labelledby="sp-courses-heading">
+  <h2 class="card-title" id="sp-courses-heading">Courses &amp; progress</h2>
+  {% if enrollment_rows %}
+    <ul class="sp-course-list">
+      {% for row in enrollment_rows %}
+        <li class="sp-course-row">
+          <div class="sp-course-main">
+            <h3 class="sp-course-title">{{ row.course.title }}</h3>
+            <span class="sp-course-status sp-course-status--{{ row.status|slugify }}">{{ row.status }}</span>
+            <div class="sp-course-progress-wrap">
+              <div class="sp-course-progress-bar" role="progressbar" aria-valuenow="{{ row.progress_pct }}" aria-valuemin="0" aria-valuemax="100">
+                <span class="sp-course-progress-fill" style="width: {{ row.progress_pct }}%;"></span>
+              </div>
+              <span class="sp-course-pct">{{ row.progress_pct }}%</span>
+            </div>
+          </div>
+          <a href="{{ row.continue_url }}" class="btn btn-secondary sp-course-cta">Continue</a>
+        </li>
+      {% endfor %}
+    </ul>
+    {% if page_obj.has_other_pages %}
+      <nav class="pagination sp-pagination" aria-label="Courses pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}#my-courses" class="page-link">Previous</a>
+        {% endif %}
+        <span class="page-current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}#my-courses" class="page-link">Next</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="sp-empty-state">
+      <p>You’re not enrolled in any courses yet.</p>
+      <a href="{% url 'lms:course_list' %}" class="btn btn-primary">Browse courses</a>
+    </div>
+  {% endif %}
+</section>

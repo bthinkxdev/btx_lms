@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Hub – BThinkX{% endblock %}
+{% block body_attr %} class="hub-page"{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/super_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{# ── Profile completion nudge ─────────────────────────────── #}
+{% if show_profile_completion_modal %}
+<div class="hub-nudge" id="profile-nudge-modal" role="dialog" aria-modal="true" aria-labelledby="nudge-title">
+  <div class="hub-nudge__backdrop"></div>
+  <div class="hub-nudge__box">
+    <div class="hub-nudge__icon"><i class="fa-solid fa-user-pen"></i></div>
+    <h2 id="nudge-title">Finish your profile</h2>
+    <p>A complete profile builds trust with mentors and makes your portfolio shareable.</p>
+    <div class="hub-nudge__actions">
+      <button class="hub-btn hub-btn--primary" data-open-section-modal="basic">Complete now</button>
+      <form method="post" action="{% url 'lms:profile_dismiss_nudge' %}" data-loader-message="Updating…">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'lms:dashboard' %}">
+        <button type="submit" class="hub-btn hub-btn--ghost">Remind me later</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# ── Page wrapper ─────────────────────────────────────────── #}
+<div class="hub-wrap">
+  <div class="hub-container">
+
+    {# ── HERO ── #}
+    <div class="hub-hero">
+      <div class="hub-hero__body">
+        <div class="hub-hero__avatar-wrap">
+          {% if learner_profile.profile_photo %}
+            <img src="{{ learner_profile.profile_photo.url }}" alt="" class="hub-hero__avatar" width="96" height="96">
+          {% else %}
+            <div class="hub-hero__avatar hub-hero__avatar--empty"><i class="fa-solid fa-user"></i></div>
+          {% endif %}
+          <button type="button" class="hub-hero__avatar-btn" data-open-section-modal="basic" title="Edit photo"><i class="fa-solid fa-camera"></i></button>
+        </div>
+        <div class="hub-hero__info">
+          <h1 class="hub-hero__name">{{ learner_profile.display_name }}</h1>
+          <p class="hub-hero__role">{{ LMS_IDENTITY_LABEL }}</p>
+          {% if learner_profile.location %}
+            <p class="hub-hero__location"><i class="fa-solid fa-location-dot"></i> {{ learner_profile.location }}</p>
+          {% endif %}
+          <div class="hub-hero__social">
+            {% if learner_profile.linkedin_url %}
+              <a href="{{ learner_profile.linkedin_url }}" class="hub-social-link" target="_blank" rel="noopener" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            {% endif %}
+            {% if learner_profile.portfolio_url %}
+              <a href="{{ learner_profile.portfolio_url }}" class="hub-social-link" target="_blank" rel="noopener" title="Website"><i class="fa-solid fa-globe"></i></a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="hub-hero__meta">
+          <div class="hub-completion">
+            <div class="hub-completion__ring">
+              <svg viewBox="0 0 44 44" aria-hidden="true">
+                <circle cx="22" cy="22" r="18" class="hub-ring-track"/>
+                <circle cx="22" cy="22" r="18" class="hub-ring-fill"
+                  stroke-dasharray="113.1"
+                  style="stroke-dashoffset: calc(113.1 - (113.1 * {{ learner_profile.profile_completion }} / 100))"/>
+              </svg>
+              <span class="hub-completion__pct">{{ learner_profile.profile_completion }}%</span>
+            </div>
+            <p class="hub-completion__label">Profile strength</p>
+          </div>
+          <span class="hub-badge hub-badge--{{ learner_badge_class }}">{{ dashboard_badge_label }}</span>
+          <button type="button" class="hub-btn hub-btn--primary" data-open-section-modal="basic">
+            <i class="fa-solid fa-pen-to-square"></i> Edit profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {# ── STATS ── #}
+    <div class="hub-stats">
+      <div class="hub-stat">
+        <i class="fa-solid fa-book-open hub-stat__icon hub-stat__icon--blue"></i>
+        <div>
+          <span class="hub-stat__val">{{ enrollment_total_count }}</span>
+          <span class="hub-stat__label">Enrolled</span>
+        </div>
+      </div>
+      <div class="hub-stat">
+        <i class="fa-solid fa-circle-check hub-stat__icon hub-stat__icon--green"></i>
+        <div>
+          <span class="hub-stat__val">{{ courses_completed_count }}</span>
+          <span class="hub-stat__label">Completed</span>
+        </div>
+      </div>
+      <div class="hub-stat">
+        <i class="fa-solid fa-certificate hub-stat__icon hub-stat__icon--amber"></i>
+        <div>
+          <span class="hub-stat__val">{{ certificate_count }}</span>
+          <span class="hub-stat__label">Certificates</span>
+        </div>
+      </div>
+      <div class="hub-stat">
+        <i class="fa-solid fa-fire hub-stat__icon hub-stat__icon--orange"></i>
+        <div>
+          <span class="hub-stat__val">{{ learning_streak_days }}</span>
+          <span class="hub-stat__label">Day streak</span>
+        </div>
+      </div>
+    </div>
+
+    {# ── CONTENT + SIDEBAR ── #}
+    <div class="hub-layout">
+
+      {# ─── LEFT: Profile sections ─── #}
+      <main class="hub-main">
+
+        {# Bio #}
+        <section class="hub-card" id="hub-sec-bio">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title">About</h2>
+            <button type="button" class="hub-edit-btn" data-open-section-modal="bio" aria-label="Edit bio">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+          </div>
+          {% if learner_profile.bio %}
+            <p class="hub-card__text">{{ learner_profile.bio|linebreaksbr }}</p>
+          {% else %}
+            <div class="hub-empty">
+              <p>Add a short bio so visitors know who you are.</p>
+              <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" data-open-section-modal="bio"><i class="fa-solid fa-plus"></i> Add bio</button>
+            </div>
+          {% endif %}
+        </section>
+
+        {# Education #}
+        <section class="hub-card" id="hub-sec-education">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title"><i class="fa-solid fa-graduation-cap hub-icon--muted"></i> Education</h2>
+            <button type="button" class="hub-edit-btn" data-open-section-modal="education" aria-label="Edit education">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+          </div>
+          {% if learner_profile.highest_education or learner_profile.college or learner_profile.graduation_year %}
+            <div class="hub-edu">
+              {% if learner_profile.highest_education %}
+                <p class="hub-edu__degree">{{ learner_profile.highest_education }}</p>
+              {% endif %}
+              {% if learner_profile.college %}
+                <p class="hub-edu__school">{{ learner_profile.college }}</p>
+              {% endif %}
+              {% if learner_profile.graduation_year %}
+                <p class="hub-edu__year">Class of {{ learner_profile.graduation_year }}</p>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="hub-empty">
+              <p>Add your degree, school, and graduation year.</p>
+              <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" data-open-section-modal="education"><i class="fa-solid fa-plus"></i> Add education</button>
+            </div>
+          {% endif %}
+        </section>
+
+        {# Experience & Projects #}
+        <section class="hub-card" id="hub-sec-experience">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title"><i class="fa-solid fa-briefcase hub-icon--muted"></i> Experience &amp; projects</h2>
+            <button type="button" class="hub-edit-btn" data-open-section-modal="experience" aria-label="Edit experience">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+          </div>
+          {% if learner_profile.experience %}
+            <div class="hub-card__text hub-card__text--pre">{{ learner_profile.experience|linebreaksbr }}</div>
+          {% else %}
+            <div class="hub-empty">
+              <p>Add your roles, freelance work, AI projects, and outcomes.</p>
+              <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" data-open-section-modal="experience"><i class="fa-solid fa-plus"></i> Add experience</button>
+            </div>
+          {% endif %}
+        </section>
+
+        {# Skills #}
+        <section class="hub-card" id="hub-sec-skills">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title"><i class="fa-solid fa-tags hub-icon--muted"></i> Skills</h2>
+            <button type="button" class="hub-edit-btn" data-open-section-modal="skills" aria-label="Edit skills">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+          </div>
+          {% with tags=learner_profile.skills_list %}
+            {% if tags %}
+              <ul class="hub-tags" id="sp-skills-display">
+                {% for skill in tags %}
+                  <li class="hub-tag">{{ skill }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <div class="hub-empty">
+                <p>Add skills that appear as tags on your public portfolio.</p>
+                <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" data-open-section-modal="skills"><i class="fa-solid fa-plus"></i> Add skills</button>
+              </div>
+            {% endif %}
+          {% endwith %}
+        </section>
+
+        {# Courses #}
+        <section class="hub-card" id="my-courses">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title"><i class="fa-solid fa-play-circle hub-icon--muted"></i> My courses</h2>
+            <a href="{% url 'lms:course_list' %}" class="hub-edit-btn"><i class="fa-solid fa-plus"></i> Browse</a>
+          </div>
+          {% if enrollment_rows %}
+            <ul class="hub-course-list">
+              {% for row in enrollment_rows %}
+                <li class="hub-course">
+                  <div class="hub-course__info">
+                    <span class="hub-course__status hub-course__status--{{ row.status|slugify }}">{{ row.status }}</span>
+                    <h3 class="hub-course__title">{{ row.course.title }}</h3>
+                    <div class="hub-course__bar-wrap">
+                      <div class="hub-course__bar" role="progressbar" aria-valuenow="{{ row.progress_pct }}" aria-valuemin="0" aria-valuemax="100">
+                        <span class="hub-course__fill" style="width:{{ row.progress_pct }}%"></span>
+                      </div>
+                      <span class="hub-course__pct">{{ row.progress_pct }}%</span>
+                    </div>
+                  </div>
+                  <a href="{{ row.continue_url }}" class="hub-btn hub-btn--primary hub-btn--sm">Continue <i class="fa-solid fa-arrow-right"></i></a>
+                </li>
+              {% endfor %}
+            </ul>
+            {% if page_obj.has_other_pages %}
+              <nav class="hub-pagination" aria-label="Courses pages">
+                {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}#my-courses" class="hub-pagination__link">← Previous</a>{% endif %}
+                <span class="hub-pagination__info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}#my-courses" class="hub-pagination__link">Next →</a>{% endif %}
+              </nav>
+            {% endif %}
+          {% else %}
+            <div class="hub-empty hub-empty--center">
+              <i class="fa-solid fa-book-open hub-empty__icon"></i>
+              <p>You haven't enrolled in any courses yet.</p>
+              <a href="{% url 'lms:course_list' %}" class="hub-btn hub-btn--primary">Browse courses</a>
+            </div>
+          {% endif %}
+        </section>
+
+        {# Certificates #}
+        <section class="hub-card" id="hub-sec-certs">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title"><i class="fa-solid fa-certificate hub-icon--muted"></i> Certificates</h2>
+          </div>
+          {% if user_certificates %}
+            <div class="hub-cert-grid">
+              {% for cert in user_certificates %}
+                <div class="hub-cert">
+                  <div class="hub-cert__badge"><i class="fa-solid fa-award"></i></div>
+                  <div class="hub-cert__body">
+                    <p class="hub-cert__course">{{ cert.course.title }}</p>
+                    <p class="hub-cert__id">{{ cert.certificate_id }}</p>
+                  </div>
+                  <div class="hub-cert__actions">
+                    <a href="{% url 'lms:certificate_detail' certificate_id=cert.certificate_id %}" class="hub-cert__link">View</a>
+                    {% if cert.pdf_file %}<a href="{% url 'lms:certificate_download' certificate_id=cert.certificate_id %}" class="hub-cert__link">Download</a>{% endif %}
+                    <a href="{% url 'lms:verify' certificate_id=cert.certificate_id %}" class="hub-cert__link hub-cert__link--muted" target="_blank" rel="noopener">Verify</a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="hub-empty hub-empty--center">
+              <i class="fa-solid fa-certificate hub-empty__icon"></i>
+              <p>Complete a course exam to earn your first certificate.</p>
+            </div>
+          {% endif %}
+        </section>
+
+      </main>
+
+      {# ─── RIGHT: Sidebar ─── #}
+      <aside class="hub-sidebar">
+
+        {# Portfolio #}
+        <div class="hub-card hub-card--sidebar">
+          <div class="hub-card__head">
+            <h2 class="hub-card__title hub-card__title--sm">Public portfolio</h2>
+            <button type="button" class="hub-edit-btn" data-open-section-modal="portfolio" aria-label="Edit portfolio settings">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+          <div class="hub-portfolio-status">
+            <span class="hub-status-pill hub-status-pill--{% if learner_profile.is_public %}on{% else %}off{% endif %}">
+              {% if learner_profile.is_public %}<i class="fa-solid fa-eye"></i> Public{% else %}<i class="fa-solid fa-eye-slash"></i> Hidden{% endif %}
+            </span>
+          </div>
+          {% if enrollment_total_count %}
+          <p class="hub-url-label"><code>/u/{{ user.username }}/</code></p>
+          <div class="hub-portfolio-actions">
+            <a href="{% url 'lms:public_profile' username=user.username %}" class="hub-btn hub-btn--primary hub-btn--sm hub-btn--block" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> View portfolio</a>
+            <button type="button" class="hub-btn hub-btn--outline hub-btn--sm hub-btn--block" id="copy-public-profile-dashboard">Copy link</button>
+          </div>
+          <input type="text" readonly class="hub-hidden" id="public-profile-url-dashboard" value="{{ public_profile_url }}" aria-hidden="true" tabindex="-1">
+          {% else %}
+          <p class="hub-portfolio-locked"><i class="fa-solid fa-lock hub-icon--muted" aria-hidden="true"></i> <strong>Portfolio link unlocks after enrollment.</strong> Enroll in at least one course to view and share your public page at <code>/u/{{ user.username }}/</code>.</p>
+          <a href="{% url 'lms:course_list' %}" class="hub-btn hub-btn--primary hub-btn--sm hub-btn--block"><i class="fa-solid fa-book-open"></i> Browse courses</a>
+          {% endif %}
+          <ul class="hub-flags">
+            <li class="hub-flag {% if learner_profile.public_whatsapp_contact %}hub-flag--on{% endif %}"><i class="fa-brands fa-whatsapp"></i> WhatsApp {% if learner_profile.public_whatsapp_contact %}shown{% else %}hidden{% endif %}</li>
+            <li class="hub-flag {% if learner_profile.public_email_contact %}hub-flag--on{% endif %}"><i class="fa-solid fa-envelope"></i> Email {% if learner_profile.public_email_contact %}shown{% else %}hidden{% endif %}</li>
+            <li class="hub-flag {% if learner_profile.available_for_freelance %}hub-flag--on{% endif %}"><i class="fa-solid fa-handshake"></i> Freelance {% if learner_profile.available_for_freelance %}badge on{% else %}badge off{% endif %}</li>
+          </ul>
+          {% if learner_profile.linkedin_url or learner_profile.portfolio_url %}
+            <div class="hub-social-links">
+              {% if learner_profile.linkedin_url %}<a href="{{ learner_profile.linkedin_url }}" class="hub-social-chip" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>{% endif %}
+              {% if learner_profile.portfolio_url %}<a href="{{ learner_profile.portfolio_url }}" class="hub-social-chip" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i> Website</a>{% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        {# Referral #}
+        <div class="hub-card hub-card--sidebar">
+          <h2 class="hub-card__title hub-card__title--sm"><i class="fa-solid fa-share-nodes hub-icon--muted"></i> Referral</h2>
+          <p class="hub-card__meta">Share your code, friends get a discount and you earn rewards.</p>
+          <div class="hub-referral-box">
+            <input type="text" readonly value="{{ referral_link }}" id="dashboard-referral-link" aria-label="Referral link" class="hub-referral-input">
+            <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" id="copy-referral-link">Copy</button>
+          </div>
+          <p class="hub-referral-code">Code: <strong>{{ referral_code }}</strong></p>
+        </div>
+
+        {# Account #}
+        <div class="hub-card hub-card--sidebar">
+          <h2 class="hub-card__title hub-card__title--sm"><i class="fa-solid fa-user-shield hub-icon--muted"></i> Account</h2>
+          <ul class="hub-account-list">
+            <li><span class="hub-account-key">Email</span><span class="hub-account-val">{{ user.email|default:"–" }}</span></li>
+            <li><span class="hub-account-key">Username</span><code class="hub-account-val hub-account-val--code">{{ user.username }}</code></li>
+            <li><span class="hub-account-key">Phone</span>
+              <span class="hub-account-val">{{ learner_profile.phone|default:"–" }}</span>
+              <button type="button" class="hub-inline-edit" data-open-section-modal="basic">Edit</button>
+            </li>
+            <li><span class="hub-account-key">Joined</span><span class="hub-account-val">{{ user.date_joined|date:"M Y" }}</span></li>
+          </ul>
+          <p class="hub-account-note"><i class="fa-solid fa-key"></i> Login with email one-time code</p>
+        </div>
+
+        {# Quick links #}
+        <div class="hub-card hub-card--sidebar">
+          <h2 class="hub-card__title hub-card__title--sm">Quick links</h2>
+          <nav class="hub-quick-links">
+            <a href="{% url 'lms:course_list' %}" class="hub-quick-link"><i class="fa-solid fa-book-open"></i> Browse courses</a>
+            <a href="{% url 'lms:verify_index' %}" class="hub-quick-link" target="_blank" rel="noopener"><i class="fa-solid fa-shield-halved"></i> Verify certificate</a>
+            <a href="{% url 'lms:home' %}" class="hub-quick-link"><i class="fa-solid fa-house"></i> Home</a>
+          </nav>
+        </div>
+
+      </aside>
+    </div>{# /.hub-layout #}
+  </div>{# /.hub-container #}
+</div>{# /.hub-wrap #}
+
+{% include "lms/partials/dashboard_profile_modals.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/profile_edit.js' %}"></script>
+<script src="{% static 'js/dashboard_hub.js' %}"></script>
+<script>
+(function(){
+  document.querySelectorAll('.sp-copy-code-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var t = btn.getAttribute('data-copy-text');
+      if (!t) return;
+      var orig = btn.textContent;
+      function done(){ btn.textContent = 'Copied!'; setTimeout(function(){ btn.textContent = orig; }, 2000); }
+      if (navigator.clipboard) { navigator.clipboard.writeText(t).then(done); } else { done(); }
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Courses – BThinkX{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Courses</h1>
+    </div>
+</div>
+<section class="courses-section">
+    <div class="container">
+        <div class="empty-state-courses">
+            <p class="empty-state-message">No courses available yet. Check back soon.</p>
+            <a href="{% url 'lms:home' %}" class="btn btn-primary">Back to Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

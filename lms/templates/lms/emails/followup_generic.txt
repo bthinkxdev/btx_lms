@@ -1,0 +1,15 @@
+{{ headline }}
+{{ site_name }}
+================================
+
+{% for p in paragraphs %}{{ p }}
+
+{% endfor %}
+{% if bullets %}{% for b in bullets %}• {{ b }}
+{% endfor %}
+{% endif %}
+{% if cta_url and cta_label %}{{ cta_label }}: {{ cta_url }}
+{% endif %}
+
+{% if site_url %}{{ site_url }}{% endif %}
+© {{ year }} {{ site_name }}

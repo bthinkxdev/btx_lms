@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Day {{ module.release_day }} Quiz – {{ course.title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'lms:dashboard' %}">Dashboard</a>
+            <span class="separator">/</span>
+            <a href="{% url 'lms:dashboard_course' slug=course.slug %}">{{ course.title }}</a>
+            <span class="separator">/</span>
+            <span>Day {{ module.release_day }} Quiz</span>
+        </nav>
+        <h1>Day {{ module.release_day }} Quiz</h1>
+        <p>Answer all 10 questions. Each correct answer is worth 1 mark. Score 6 or more to unlock the next day.</p>
+    </div>
+</div>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-form-card">
+            {% if just_submitted %}
+                <div class="alert {% if score >= 6 %}alert-success{% else %}alert-error{% endif %}">
+                    You scored {{ score }}/{{ questions|length }}.
+                    {% if score >= 6 %}
+                        Great! The next day's lessons are now unlocked.
+                    {% else %}
+                        You need at least 6 marks to unlock the next day. You can retake this quiz.
+                    {% endif %}
+                </div>
+            {% elif existing_result %}
+                <div class="alert {% if existing_result.passed %}alert-success{% else %}alert-info{% endif %}">
+                    Last attempt: {{ existing_result.score }}/10.
+                    {% if existing_result.passed %}
+                        You already passed this quiz, but you can review or retake it.
+                    {% else %}
+                        You need at least 6 marks to unlock the next day. You can retake this quiz.
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="day-quiz-form" data-loader-message="Submitting quiz…">
+                {% csrf_token %}
+                <ol class="quiz-question-list">
+                    {% for q in questions %}
+                    <li class="quiz-question-item">
+                        <p class="quiz-question-text">{{ q.text }}</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q_{% firstof q.id %}" value="1"> {{ q.option_1 }}</label>
+                            <label><input type="radio" name="q_{% firstof q.id %}" value="2"> {{ q.option_2 }}</label>
+                            <label><input type="radio" name="q_{% firstof q.id %}" value="3"> {{ q.option_3 }}</label>
+                            <label><input type="radio" name="q_{% firstof q.id %}" value="4"> {{ q.option_4 }}</label>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ol>
+                <div class="quiz-controls">
+                    <div class="quiz-progress" aria-live="polite"></div>
+                    <div class="quiz-nav-buttons">
+                        <button type="button" class="btn btn-outline quiz-prev-btn">Previous</button>
+                        <button type="button" class="btn btn-primary quiz-next-btn">Next</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary quiz-submit-btn">Submit Quiz</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

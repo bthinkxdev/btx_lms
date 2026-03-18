@@ -1,0 +1,225 @@
+{% comment %}Six dedicated modals, one per edit entry point{% endcomment %}
+{% url 'lms:dashboard_profile_save' as profile_save_url %}
+
+{# Section: Basic (photo, name, phone, location) #}
+<div class="sp-profile-modal sp-section-modal" id="modal-section-basic" role="dialog" aria-modal="true" aria-labelledby="modal-basic-title" aria-hidden="true" hidden>
+  <div class="sp-profile-modal-backdrop js-section-modal-backdrop" data-modal="modal-section-basic"></div>
+  <div class="sp-profile-modal-dialog sp-section-modal-dialog">
+    <div class="sp-profile-modal-header">
+      <h2 id="modal-basic-title">Photo &amp; identity</h2>
+      <button type="button" class="sp-profile-modal-close js-section-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sp-section-modal-errors" id="modal-basic-errors" role="alert" hidden></div>
+    <form method="post" enctype="multipart/form-data" class="js-section-profile-form" action="{{ profile_save_url }}" data-modal-id="modal-section-basic">
+      {% csrf_token %}
+      <input type="hidden" name="profile_section" value="basic">
+      <div class="sp-modal-scroll">
+        <div class="profile-photo-row">
+          <div class="profile-photo-preview-wrap">
+            {% if learner_profile.profile_photo %}
+              <img src="{{ learner_profile.profile_photo.url }}" alt="" class="profile-photo-preview" width="120" height="120" id="sec-basic-photo-preview">
+            {% else %}
+              <div id="sec-basic-photo-preview" class="learner-profile-avatar learner-profile-avatar--placeholder profile-photo-preview profile-photo-preview--empty">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            {% endif %}
+          </div>
+          <div class="profile-photo-fields">
+            <span class="profile-field-label">Profile photo</span>
+            <div class="profile-photo-upload" id="sec-basic-photo-upload" data-has-photo="{% if learner_profile.profile_photo %}1{% else %}0{% endif %}">
+              <label for="id_sec_basic-profile_photo" class="profile-photo-btn"><i class="fa-solid fa-camera" aria-hidden="true"></i><span>Choose image</span></label>
+              {{ form_section_basic.profile_photo }}
+              <span class="profile-photo-filename" id="sec-basic-photo-filename" aria-live="polite">No file selected</span>
+            </div>
+            <p class="form-hint profile-photo-hint">JPG, PNG or WebP.</p>
+          </div>
+        </div>
+        <div class="form-group profile-form-group">
+          <label class="profile-field-label" for="id_sec_basic-full_name">Full name</label>
+          {{ form_section_basic.full_name }}
+        </div>
+        <div class="form-row profile-form-row-2">
+          <div class="form-group profile-form-group">
+            <label class="profile-field-label" for="id_sec_basic-phone">Phone</label>
+            {{ form_section_basic.phone }}
+          </div>
+          <div class="form-group profile-form-group">
+            <label class="profile-field-label" for="id_sec_basic-location">Location</label>
+            {{ form_section_basic.location }}
+          </div>
+        </div>
+      </div>
+      <div class="sp-profile-modal-footer">
+        <button type="submit" class="btn btn-primary js-section-save sp-btn-violet">Save</button>
+        <button type="button" class="btn btn-ghost js-section-modal-close sp-modal-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Section: Bio #}
+<div class="sp-profile-modal sp-section-modal" id="modal-section-bio" role="dialog" aria-modal="true" aria-labelledby="modal-bio-title" aria-hidden="true" hidden>
+  <div class="sp-profile-modal-backdrop js-section-modal-backdrop" data-modal="modal-section-bio"></div>
+  <div class="sp-profile-modal-dialog sp-section-modal-dialog">
+    <div class="sp-profile-modal-header">
+      <h2 id="modal-bio-title">Edit bio</h2>
+      <button type="button" class="sp-profile-modal-close js-section-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sp-section-modal-errors" id="modal-bio-errors" role="alert" hidden></div>
+    <form method="post" class="js-section-profile-form" action="{{ profile_save_url }}" data-modal-id="modal-section-bio">
+      {% csrf_token %}
+      <input type="hidden" name="profile_section" value="bio">
+      <div class="sp-modal-scroll">
+        <div class="form-group profile-form-group">
+          <label class="profile-field-label" for="id_sec_bio-bio">Short bio</label>
+          {{ form_section_bio.bio }}
+        </div>
+      </div>
+      <div class="sp-profile-modal-footer">
+        <button type="submit" class="btn btn-primary js-section-save sp-btn-violet">Save bio</button>
+        <button type="button" class="btn btn-ghost js-section-modal-close sp-modal-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Section: Education #}
+<div class="sp-profile-modal sp-section-modal" id="modal-section-education" role="dialog" aria-modal="true" aria-labelledby="modal-edu-title" aria-hidden="true" hidden>
+  <div class="sp-profile-modal-backdrop js-section-modal-backdrop" data-modal="modal-section-education"></div>
+  <div class="sp-profile-modal-dialog sp-section-modal-dialog">
+    <div class="sp-profile-modal-header">
+      <h2 id="modal-edu-title">Edit education</h2>
+      <button type="button" class="sp-profile-modal-close js-section-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sp-section-modal-errors" id="modal-edu-errors" role="alert" hidden></div>
+    <form method="post" class="js-section-profile-form" action="{{ profile_save_url }}" data-modal-id="modal-section-education">
+      {% csrf_token %}
+      <input type="hidden" name="profile_section" value="education">
+      <div class="sp-modal-scroll">
+        <div class="form-group profile-form-group">
+          <label class="profile-field-label" for="id_sec_edu-highest_education">Highest education</label>
+          {{ form_section_education.highest_education }}
+        </div>
+        <div class="form-group profile-form-group">
+          <label class="profile-field-label" for="id_sec_edu-college">College / institution</label>
+          {{ form_section_education.college }}
+        </div>
+        <div class="form-group profile-form-group profile-form-group--year">
+          <label class="profile-field-label" for="id_sec_edu_graduation_year">Graduation year</label>
+          {{ form_section_education.graduation_year }}
+        </div>
+      </div>
+      <div class="sp-profile-modal-footer">
+        <button type="submit" class="btn btn-primary js-section-save sp-btn-violet">Save education</button>
+        <button type="button" class="btn btn-ghost js-section-modal-close sp-modal-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Section: Experience #}
+<div class="sp-profile-modal sp-section-modal" id="modal-section-experience" role="dialog" aria-modal="true" aria-labelledby="modal-exp-title" aria-hidden="true" hidden>
+  <div class="sp-profile-modal-backdrop js-section-modal-backdrop" data-modal="modal-section-experience"></div>
+  <div class="sp-profile-modal-dialog sp-section-modal-dialog">
+    <div class="sp-profile-modal-header">
+      <h2 id="modal-exp-title">Experience &amp; project details</h2>
+      <button type="button" class="sp-profile-modal-close js-section-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sp-section-modal-errors" id="modal-exp-errors" role="alert" hidden></div>
+    <form method="post" class="js-section-profile-form" action="{{ profile_save_url }}" data-modal-id="modal-section-experience">
+      {% csrf_token %}
+      <input type="hidden" name="profile_section" value="experience">
+      <div class="sp-modal-scroll">
+        <div class="form-group profile-form-group">
+          <label class="profile-field-label" for="id_sec_exp-experience">Roles, projects &amp; outcomes</label>
+          <p class="sp-modal-field-hint">Include freelance, AI prompts, clients, and measurable results where you can.</p>
+          {{ form_section_experience.experience }}
+        </div>
+      </div>
+      <div class="sp-profile-modal-footer">
+        <button type="submit" class="btn btn-primary js-section-save sp-btn-violet">Save project details</button>
+        <button type="button" class="btn btn-ghost js-section-modal-close sp-modal-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Section: Skills #}
+<div class="sp-profile-modal sp-section-modal" id="modal-section-skills" role="dialog" aria-modal="true" aria-labelledby="modal-skills-title" aria-hidden="true" hidden>
+  <div class="sp-profile-modal-backdrop js-section-modal-backdrop" data-modal="modal-section-skills"></div>
+  <div class="sp-profile-modal-dialog sp-section-modal-dialog">
+    <div class="sp-profile-modal-header">
+      <h2 id="modal-skills-title">Edit skills</h2>
+      <button type="button" class="sp-profile-modal-close js-section-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sp-section-modal-errors" id="modal-skills-errors" role="alert" hidden></div>
+    <form method="post" class="js-section-profile-form" action="{{ profile_save_url }}" data-modal-id="modal-section-skills">
+      {% csrf_token %}
+      <input type="hidden" name="profile_section" value="skills">
+      <div class="sp-modal-scroll">
+        <p class="profile-skills-intro">Press <kbd>Enter</kbd> or <kbd>,</kbd> after each skill.</p>
+        <div class="skills-tag-editor-wrap">
+          <div class="skills-tag-editor" id="sec-skills-modal-editor" role="group" aria-label="Skills"></div>
+        </div>
+        {{ form_section_skills.skills }}
+      </div>
+      <div class="sp-profile-modal-footer">
+        <button type="submit" class="btn btn-primary js-section-save sp-btn-violet">Save skills</button>
+        <button type="button" class="btn btn-ghost js-section-modal-close sp-modal-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Section: Portfolio and social #}
+<div class="sp-profile-modal sp-section-modal" id="modal-section-portfolio" role="dialog" aria-modal="true" aria-labelledby="modal-port-title" aria-hidden="true" hidden>
+  <div class="sp-profile-modal-backdrop js-section-modal-backdrop" data-modal="modal-section-portfolio"></div>
+  <div class="sp-profile-modal-dialog sp-section-modal-dialog">
+    <div class="sp-profile-modal-header">
+      <h2 id="modal-port-title">Public portfolio &amp; links</h2>
+      <button type="button" class="sp-profile-modal-close js-section-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sp-section-modal-errors" id="modal-port-errors" role="alert" hidden></div>
+    {% if not enrollment_total_count %}
+    <p class="hub-portfolio-modal-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Your page at <code>/u/{{ user.username }}/</code> is only visible to others after you enroll in at least one course (and keep <strong>Public portfolio</strong> on).</p>
+    {% endif %}
+    <form method="post" class="js-section-profile-form" action="{{ profile_save_url }}" data-modal-id="modal-section-portfolio">
+      {% csrf_token %}
+      <input type="hidden" name="profile_section" value="portfolio">
+      <div class="sp-modal-scroll">
+        <div class="form-check profile-form-check mb-3">
+          {{ form_section_portfolio.is_public }}
+          <label class="form-check-label" for="id_sec_portfolio-is_public">{{ form_section_portfolio.is_public.label }}</label>
+        </div>
+        <p class="form-hint small">{{ form_section_portfolio.is_public.help_text }}</p>
+        <div class="form-check profile-form-check">
+          {{ form_section_portfolio.public_whatsapp_contact }}
+          <label class="form-check-label" for="id_sec_portfolio-public_whatsapp_contact">{{ form_section_portfolio.public_whatsapp_contact.label }}</label>
+        </div>
+        <p class="form-hint small">{{ form_section_portfolio.public_whatsapp_contact.help_text }}</p>
+        <div class="form-check profile-form-check">
+          {{ form_section_portfolio.public_email_contact }}
+          <label class="form-check-label" for="id_sec_portfolio-public_email_contact">{{ form_section_portfolio.public_email_contact.label }}</label>
+        </div>
+        <p class="form-hint small">{{ form_section_portfolio.public_email_contact.help_text }}</p>
+        <div class="form-check profile-form-check profile-form-group--last">
+          {{ form_section_portfolio.available_for_freelance }}
+          <label class="form-check-label" for="id_sec_portfolio-available_for_freelance">{{ form_section_portfolio.available_for_freelance.label }}</label>
+        </div>
+        <hr class="sp-modal-hr">
+        <div class="form-group profile-form-group">
+          <label class="profile-field-label" for="id_sec_portfolio-linkedin_url">LinkedIn</label>
+          {{ form_section_portfolio.linkedin_url }}
+        </div>
+        <div class="form-group profile-form-group profile-form-group--last">
+          <label class="profile-field-label" for="id_sec_portfolio-portfolio_url">Portfolio / website</label>
+          {{ form_section_portfolio.portfolio_url }}
+        </div>
+      </div>
+      <div class="sp-profile-modal-footer">
+        <button type="submit" class="btn btn-primary js-section-save sp-btn-violet">Save</button>
+        <button type="button" class="btn btn-ghost js-section-modal-close sp-modal-cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

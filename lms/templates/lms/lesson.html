@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ lesson.title }} – {{ course.title }}{% endblock %}
+{% block content %}
+<div class="lesson-page">
+    <div class="container">
+        <div class="lesson-header">
+            <nav class="breadcrumb">
+                <a href="{% url 'lms:dashboard' %}">Dashboard</a>
+                <span class="separator">/</span>
+                <a href="{% url 'lms:dashboard_course' slug=course.slug %}">{{ course.title }}</a>
+                <span class="separator">/</span>
+                <span>{{ lesson.title }}</span>
+            </nav>
+            <h1>{{ lesson.title }}</h1>
+        </div>
+
+        <div class="lesson-content">
+            <div class="video-container">
+                <video
+                    controls
+                    preload="metadata"
+                    class="lesson-video"
+                    controlsList="nodownload noplaybackrate"
+                    disablePictureInPicture
+                    disableRemotePlayback
+                    oncontextmenu="return false;">
+                    {% if video_url %}
+                        <source src="{{ video_url }}" type="video/mp4">
+                    {% else %}
+                        <!-- Dummy demo video (S3-ready fallback, same as other pages) -->
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
+                    {% endif %}
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            {% if video_url %}
+            <div class="alert alert-warning">
+                Video link expires in 5 minutes. Refresh the page for a new link.
+            </div>
+            {% endif %}
+
+            <div class="lesson-info">
+                <h2>{{ lesson.title }}</h2>
+                {% if lesson.duration_seconds %}
+                    <div class="lesson-meta">
+                        Duration: {{ lesson.duration_seconds|floatformat:0 }} seconds
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="lesson-navigation">
+                <a href="{% url 'lms:dashboard_course' slug=course.slug %}" class="btn btn-outline">Back to Course</a>
+                {% if module %}
+                <a href="{% url 'lms:day_quiz' slug=course.slug day=module.release_day %}" class="btn btn-primary">
+                    Day {{ module.release_day }} Quiz
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

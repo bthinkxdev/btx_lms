@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ exam.title }} – {{ course.title }}{% endblock %}
+{% block content %}
+<div class="lesson-page">
+    <div class="container">
+        <div class="lesson-header">
+            <nav class="breadcrumb">
+                <a href="{% url 'lms:dashboard' %}">Dashboard</a>
+                <span class="separator">/</span>
+                <a href="{% url 'lms:dashboard_course' slug=course.slug %}">{{ course.title }}</a>
+                <span class="separator">/</span>
+                <span>{{ exam.title }}</span>
+            </nav>
+            <h1>{{ exam.title }}</h1>
+        </div>
+
+        <div class="lesson-content">
+            {% if exam.description %}
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-light); border-radius: 8px;">
+                    {{ exam.description }}
+                </div>
+            {% endif %}
+
+            <div style="background: var(--white); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-md); margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                    <div>
+                        <strong>Passing Score:</strong> {{ exam.passing_score }}%
+                    </div>
+                    {% if exam.duration_minutes %}
+                        <div>
+                            <strong>Duration:</strong> {{ exam.duration_minutes }} minutes
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if result %}
+                    <div style="margin-top: 2rem; padding: 2rem; border-radius: 8px; text-align: center; {% if result.passed %}background: #c6f6d5;{% else %}background: #fed7d7;{% endif %}">
+                        <h2 style="margin-bottom: 1rem; {% if result.passed %}color: #22543d;{% else %}color: #742a2a;{% endif %}">
+                            {% if result.passed %}✓ Passed{% else %}✗ Failed{% endif %}
+                        </h2>
+                        <p style="font-size: 2rem; font-weight: bold; margin-bottom: 1rem; {% if result.passed %}color: var(--success-color);{% else %}color: var(--danger-color);{% endif %}">
+                            {{ result.score }}%
+                        </p>
+                        {% if result.passed and certificate %}
+                            <a href="{% url 'lms:certificate_detail' certificate_id=certificate.certificate_id %}" class="btn btn-primary">View Your Certificate</a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning" style="margin-top: 2rem;">
+                        Your exam result is pending. Your instructor will upload your score soon.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="lesson-navigation">
+                <a href="{% url 'lms:dashboard_course' slug=course.slug %}" class="btn btn-outline">Back to Course</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+Django>=5.2,<6
+boto3>=1.28
+qrcode[pil]>=7.4
+reportlab>=4.0

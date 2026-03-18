@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Get Started – BThinkX{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Sign in or sign up with email</h1>
+    </div>
+</div>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-form-card" style="text-align: center;">
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">
+                We now use a simple email + one-time code for both login and signup.
+                Enter your email and we'll create your account or log you in instantly.
+            </p>
+            <button type="button"
+                    class="btn btn-primary js-open-login-modal"
+                    data-next="{% url 'lms:dashboard' %}">
+                Continue with email
+            </button>
+            <p style="margin-top: 1.5rem;">
+                <a href="{% url 'lms:home' %}" style="color: var(--text-light); text-decoration: none;">
+                    Back to Home
+                </a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.querySelector('.js-open-login-modal');
+    if (btn) {
+      btn.click();
+    }
+  });
+</script>
+{% endblock %}

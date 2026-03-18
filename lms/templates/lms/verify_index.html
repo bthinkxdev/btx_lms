@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Verify Certificate – BThinkX{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="vfy-page">
+  <div class="vfy-card">
+
+    {# Icon #}
+    <div class="vfy-icon" aria-hidden="true">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+
+    {# Heading #}
+    <h1 class="vfy-title">Verify Certificate</h1>
+    <p class="vfy-subtitle">
+      Enter the unique certificate ID to instantly confirm the authenticity of any BThinkX credential.
+    </p>
+
+    {# Trust signals #}
+    <div class="vfy-trust" aria-label="Trust indicators">
+      <span class="vfy-trust-item">
+        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+        Tamper-proof
+      </span>
+      <span class="vfy-trust-item">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+        Instant result
+      </span>
+      <span class="vfy-trust-item">
+        <i class="fa-solid fa-globe" aria-hidden="true"></i>
+        Public &amp; free
+      </span>
+    </div>
+
+    {# Form #}
+    <form method="post" action="{% url 'lms:verify_index' %}" class="vfy-form" data-loader-message="Verifying certificate…">
+      {% csrf_token %}
+      <div>
+        <label for="certificate_id" class="vfy-label">Certificate ID</label>
+        <input
+          type="text"
+          name="certificate_id"
+          id="certificate_id"
+          class="vfy-input"
+          placeholder="e.g. BTHNX-2024-XXXX"
+          required
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+      <button type="submit" class="vfy-submit">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        Verify Now
+      </button>
+    </form>
+
+    <p class="vfy-footer-note">
+      Certificate IDs are shown on every BThinkX credential, printed and digital versions.
+    </p>
+
+  </div>
+</div>
+{% endblock %}

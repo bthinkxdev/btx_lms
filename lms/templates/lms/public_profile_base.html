@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <title>{% block title %}Portfolio{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/public_portfolio.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="pp-body">
+    <a href="#pp-main" class="pp-skip">Skip to content</a>
+    <header class="pp-topbar">
+        <div class="pp-topbar-inner">
+            <a href="{% url 'lms:home' %}" class="pp-brand">
+                <img src="{% static 'image/logo.jpg' %}" alt="" class="pp-brand-logo" width="36" height="36">
+                <span>BThinkX</span>
+            </a>
+            <div class="pp-topbar-right">
+                <span class="pp-verified-pill"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span class="pp-verified-long">Verified learner</span><span class="pp-verified-short">Verified</span></span>
+                <a href="{% url 'lms:home' %}" class="pp-topbar-link">Courses</a>
+            </div>
+        </div>
+    </header>
+    <main id="pp-main">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="pp-site-footer">
+        <div class="pp-footer-inner">
+            <p>Profile hosted on <strong>BThinkX</strong>, learn in-demand skills with verified credentials.</p>
+            <a href="{% url 'lms:home' %}" class="pp-footer-cta">Explore programs</a>
+        </div>
+    </footer>
+</body>
+</html>

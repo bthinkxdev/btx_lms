@@ -1,0 +1,45 @@
+{% if case_studies %}
+<section class="home-section section-real-results" aria-labelledby="real-results-heading">
+  <h2 id="real-results-heading" class="section-title section-title-center">Real results</h2>
+  <p class="section-subtitle section-subtitle-center">Before / after snapshots from learners (replace with your verified stories).</p>
+  <div class="case-studies-grid">
+    {% for cs in case_studies %}
+    <article class="case-study-card">
+      {% if cs.image %}<img src="{{ cs.image.url }}" alt="" class="case-study-img" loading="lazy">{% endif %}
+      <h3 class="case-study-title">{{ cs.title }}</h3>
+      {% if cs.result_metrics %}<p class="case-study-metrics">{{ cs.result_metrics }}</p>{% endif %}
+      <div class="case-study-ba">
+        <div class="case-study-before"><strong>Before</strong><p>{{ cs.before_text|truncatewords:40 }}</p></div>
+        <div class="case-study-after"><strong>After</strong><p>{{ cs.after_text|truncatewords:40 }}</p></div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if testimonials %}
+<section class="home-section section-proof-testimonials" aria-labelledby="proof-test-heading">
+  <h2 id="proof-test-heading" class="section-title section-title-center">What learners say</h2>
+  <ul class="testimonials-proof-grid">
+    {% for t in testimonials %}
+    <li class="testimonial-proof-card{% if t.is_featured %} is-featured{% endif %}">
+      <div class="testimonial-proof-head">
+        {% if t.photo %}<img src="{{ t.photo.url }}" alt="" class="testimonial-photo" width="48" height="48" loading="lazy">{% endif %}
+        <div>
+          <strong>{{ t.name }}</strong>
+          <span class="testimonial-stars" aria-label="{{ t.rating }} of 5">{% for i in "12345" %}{% if forloop.counter <= t.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+        </div>
+      </div>
+      <p class="testimonial-proof-text">{{ t.content }}</p>
+      {% if t.proof_image %}
+      <a href="{{ t.proof_image.url }}" target="_blank" rel="noopener" class="testimonial-proof-thumb">
+        <img src="{{ t.proof_image.url }}" alt="Proof screenshot" loading="lazy">
+        <span>View proof</span>
+      </a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}

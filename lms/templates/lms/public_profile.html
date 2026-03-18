@@ -1,0 +1,526 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" class="pp2-html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ portfolio_meta_title }}</title>
+  <meta name="description" content="{{ portfolio_meta_description }}">
+  <meta property="og:title" content="{{ portfolio_meta_title }}">
+  <meta property="og:description" content="{{ portfolio_meta_description }}">
+  <meta property="og:url" content="{{ portfolio_share_url }}">
+  <meta property="og:type" content="profile">
+  {% if portfolio_og_image %}<meta property="og:image" content="{{ portfolio_og_image }}">{% endif %}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ portfolio_meta_title }}">
+  <meta name="twitter:description" content="{{ portfolio_meta_description }}">
+  <link rel="canonical" href="{{ portfolio_share_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <style>
+    /* ── Reset ── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.65;color:#1e293b;background:#f8fafc;-webkit-font-smoothing:antialiased}
+
+    /* ── Tokens ── */
+    :root{
+      --v:#6440FB;--vd:#5835d4;--vl:#8b6ffb;--vbg:#f3f0ff;--vbdr:rgba(100,64,251,.15);
+      --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;--g400:#94a3b8;
+      --g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;--g900:#0f172a;
+      --gr:#059669;--grbg:#d1fae5;--am:#d97706;--ambg:#fef3c7;
+      --r8:8px;--r12:12px;--r16:16px;--r20:20px;
+      --sh:0 1px 3px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.05);
+      --shv:0 4px 24px rgba(100,64,251,.14);
+    }
+
+    /* ── Skip link ── */
+    .pp-skip{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .pp-skip:focus{position:fixed;left:1rem;top:1rem;z-index:10000;width:auto;height:auto;padding:.75rem 1rem;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.15)}
+
+    /* ── Topnav ── */
+    .pp-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--g200);transition:background .3s}
+    .pp-nav-inner{max-width:1100px;margin:0 auto;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .pp-nav-brand{display:flex;align-items:center;gap:.625rem;text-decoration:none;font-weight:800;font-size:1rem;color:var(--g900)}
+    .pp-nav-brand-mark{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--v) 0%,var(--vl) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;font-weight:900;flex-shrink:0}
+    .pp-nav-links{display:flex;align-items:center;gap:1.5rem}
+    .pp-nav-link{font-size:.82rem;font-weight:600;color:var(--g600);text-decoration:none;transition:color .2s}
+    .pp-nav-link:hover{color:var(--v)}
+    .pp-nav-cta{padding:.5rem 1.1rem;background:var(--v);color:#fff;border-radius:var(--r8);font-size:.82rem;font-weight:700;text-decoration:none;transition:background .2s}
+    .pp-nav-cta:hover{background:var(--vd)}
+
+    /* ── Page shell ── */
+    .pp-shell{padding-top:65px}
+
+    /* ── Hero ── */
+    .pp-hero{background:#fff;padding:80px 0 64px;position:relative;overflow:hidden;border-bottom:1px solid var(--g200)}
+    .pp-hero-inner{max-width:1100px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:1}
+    .pp-hero-grid{display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:center}
+    @media(max-width:768px){.pp-hero-grid{grid-template-columns:1fr}.pp-hero-photo-col{display:none}}
+
+    .pp-hero-content{}
+    {% if student_profile.available_for_freelance %}
+    .pp-avail{display:inline-flex;align-items:center;gap:6px;background:rgba(5,150,105,.2);border:1px solid rgba(5,150,105,.3);color:#34d399;font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:100px;margin-bottom:14px;letter-spacing:.05em;text-transform:uppercase}
+    .pp-avail::before{content:"";width:7px;height:7px;border-radius:50%;background:#34d399;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    {% endif %}
+
+    .pp-kicker{font-size:.85rem;font-weight:600;color:var(--g400);margin-bottom:6px}
+    .pp-name{font-size:clamp(2rem,5vw,3rem);font-weight:900;color:var(--g900);letter-spacing:-.04em;line-height:1.1;margin-bottom:10px}
+    .pp-role{font-size:1rem;color:var(--g600);margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .pp-role-sep{color:var(--g300)}
+    .pp-role-accent{color:var(--v);font-weight:600}
+    .pp-bio{font-size:.95rem;color:var(--g600);line-height:1.65;max-width:520px;margin-bottom:16px}
+    .pp-loc{font-size:.82rem;color:var(--g400);display:flex;align-items:center;gap:6px;margin-bottom:24px}
+    .pp-hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+    .pp-hero-photo-col{display:flex;justify-content:center}
+    .pp-photo-frame{width:240px;height:240px;border-radius:50%;overflow:hidden;border:4px solid var(--g200);box-shadow:0 8px 32px rgba(0,0,0,.1);flex-shrink:0}
+    .pp-photo-frame img{width:100%;height:100%;object-fit:cover;display:block}
+    .pp-photo-ph{width:100%;height:100%;background:linear-gradient(135deg,#312e81,var(--v));display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(255,255,255,.3)}
+
+    /* ── Buttons ── */
+    .pp-btn{display:inline-flex;align-items:center;gap:7px;font-size:.875rem;font-weight:700;padding:11px 22px;border-radius:var(--r8);border:none;cursor:pointer;text-decoration:none;transition:all .2s;line-height:1;white-space:nowrap}
+    .pp-btn--primary{background:var(--v);color:#fff;box-shadow:0 2px 8px rgba(100,64,251,.3)}
+    .pp-btn--primary:hover{background:var(--vd);box-shadow:0 4px 16px rgba(100,64,251,.4);color:#fff}
+    .pp-btn--ghost{background:var(--g100);color:var(--g700);border:1px solid var(--g200)}
+    .pp-btn--ghost:hover{background:var(--g200);color:var(--g800)}
+    .pp-btn--outline{background:transparent;color:var(--v);border:1.5px solid var(--vbdr)}
+    .pp-btn--outline:hover{background:var(--vbg)}
+    .pp-btn--social{background:var(--g100);color:var(--g700);border:1px solid var(--g200)}
+    .pp-btn--social:hover{background:var(--g200)}
+    .pp-btn--wa{background:#25d366;color:#fff}
+    .pp-btn--wa:hover{background:#1dab52;color:#fff}
+    .pp-btn--sm{font-size:.8rem;padding:8px 16px}
+
+    /* ── Content ── */
+    .pp-content{max-width:1100px;margin:0 auto;padding:48px 1.5rem 80px;display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:start}
+    @media(max-width:860px){.pp-content{grid-template-columns:1fr}}
+
+    /* ── Cards ── */
+    .pp-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r16);box-shadow:var(--sh);overflow:hidden;margin-bottom:22px}
+    .pp-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px 0}
+    .pp-card-title{font-size:.82rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:8px}
+    .pp-card-title i{color:var(--v);font-size:.85rem}
+    .pp-card-body{padding:16px 24px 22px}
+    .pp-card-text{font-size:.875rem;color:var(--g700);line-height:1.65}
+    .pp-card-muted{font-size:.85rem;color:var(--g400);font-style:italic}
+    .pp-card-lead{font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:4px}
+    .pp-card-sub{font-size:.85rem;color:var(--g500)}
+
+    /* ── Skills ── */
+    .pp-skills{display:flex;flex-wrap:wrap;gap:8px;padding:16px 24px 22px}
+    .pp-skill{display:inline-flex;align-items:center;padding:6px 14px;background:var(--vbg);border:1px solid var(--vbdr);border-radius:100px;font-size:.78rem;font-weight:600;color:var(--v)}
+
+    /* ── Work grid ── */
+    .pp-work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;padding:0 24px 22px}
+    .pp-work-item{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r12);padding:18px}
+    .pp-work-ico{width:38px;height:38px;border-radius:10px;background:var(--vbg);display:flex;align-items:center;justify-content:center;color:var(--v);font-size:1rem;margin-bottom:12px}
+    .pp-work-h3{font-size:.9rem;font-weight:700;color:var(--g800);margin-bottom:6px}
+    .pp-work-p{font-size:.8rem;color:var(--g600);line-height:1.5;margin-bottom:10px}
+    .pp-work-ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
+    .pp-work-ul li{font-size:.78rem;color:var(--g500);padding-left:14px;position:relative}
+    .pp-work-ul li::before{content:"·";position:absolute;left:0;color:var(--v)}
+
+    /* ── Certificate ── */
+    .pp-cert-box{margin:0 24px 22px;background:linear-gradient(135deg,var(--vbg) 0%,#ede9fe 100%);border:1px solid var(--vbdr);border-radius:var(--r12);padding:20px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .pp-cert-ico{font-size:2.5rem;color:var(--v);flex-shrink:0}
+    .pp-cert-main{flex:1}
+    .pp-cert-verified{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;color:var(--gr);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+    .pp-cert-name{font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:4px}
+    .pp-cert-meta{font-size:.78rem;color:var(--g500);margin-bottom:12px}
+    .pp-cert-extra{list-style:none;padding:8px 24px 22px;margin:0;display:flex;flex-direction:column;gap:8px}
+    .pp-cert-extra li{font-size:.85rem}
+    .pp-cert-extra a{color:var(--v);text-decoration:none;font-weight:600}
+    .pp-cert-extra a:hover{text-decoration:underline}
+
+    /* ── Sidebar ── */
+    .pp-sidebar-card{background:#fff;border:1px solid var(--g200);border-radius:var(--r16);box-shadow:var(--sh);padding:22px;margin-bottom:20px}
+    .pp-sidebar-title{font-size:.78rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+    .pp-sidebar-title i{color:var(--v)}
+
+    .pp-contact-btns{display:flex;flex-direction:column;gap:10px}
+    .pp-contact-btn{display:flex;align-items:center;gap:9px;padding:11px 16px;border-radius:var(--r8);text-decoration:none;font-size:.875rem;font-weight:600;transition:all .2s}
+
+    .pp-quick-info{display:flex;flex-direction:column;gap:10px}
+    .pp-quick-item{display:flex;align-items:flex-start;gap:10px;font-size:.82rem;color:var(--g700)}
+    .pp-quick-item i{color:var(--v);width:16px;flex-shrink:0;margin-top:1px}
+
+    .pp-branding{text-align:center;margin-top:8px}
+    .pp-branding a{font-size:.75rem;color:var(--g400);text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:color .2s}
+    .pp-branding a:hover{color:var(--v)}
+
+    /* ── Footer ── */
+    .pp-footer{background:var(--g900);padding:32px 1.5rem;text-align:center}
+    .pp-footer-name{font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px}
+    .pp-footer-copy{font-size:.78rem;color:rgba(255,255,255,.35)}
+    .pp-footer-link{font-size:.75rem;color:rgba(255,255,255,.25);text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:6px;transition:color .2s}
+    .pp-footer-link:hover{color:rgba(255,255,255,.5)}
+
+    /* ── Reveal animation ── */
+    .pp-reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+    .pp-reveal.is-visible{opacity:1;transform:none}
+    .pp-reveal-d1{transition-delay:.1s}
+    .pp-reveal-d2{transition-delay:.2s}
+    .pp-reveal-d3{transition-delay:.3s}
+
+    @media(max-width:600px){
+      .pp-hero{padding:60px 0}
+      .pp-content{padding:32px 1rem 60px}
+      .pp-nav-links .pp-nav-link:not(.pp-nav-cta){display:none}
+      .pp-cert-box{flex-direction:column}
+    }
+  </style>
+</head>
+
+<body>
+  <a class="pp-skip" href="#pp-main">Skip to content</a>
+
+  {# ── Nav ── #}
+  <header class="pp-nav" id="pp-nav">
+    <div class="pp-nav-inner">
+      <a href="#pp-hero" class="pp-nav-brand">
+        <span class="pp-nav-brand-mark" aria-hidden="true">{{ portfolio_nav_initial }}</span>
+        {{ student_profile.display_name }}
+      </a>
+      <nav class="pp-nav-links" aria-label="Portfolio navigation">
+        <a href="#pp-about" class="pp-nav-link">About</a>
+        <a href="#pp-skills" class="pp-nav-link">Skills</a>
+        <a href="#pp-work" class="pp-nav-link">Work</a>
+        <a href="#pp-contact" class="pp-nav-cta">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="pp-shell" id="pp-hero">
+    {# ── Hero ── #}
+    <section class="pp-hero" aria-labelledby="pp-name">
+      <div class="pp-hero-inner">
+        <div class="pp-hero-grid">
+          <div class="pp-hero-content pp-reveal">
+            {% if student_profile.available_for_freelance %}
+            <p class="pp-avail"><i class="fa-solid fa-circle" aria-hidden="true"></i> Available for freelance</p>
+            {% endif %}
+            <p class="pp-kicker">Hello, I&rsquo;m</p>
+            <h1 class="pp-name" id="pp-name">{{ student_profile.display_name }}</h1>
+            <p class="pp-role">
+              <span>{{ LMS_IDENTITY_LABEL }}</span>
+              <span class="pp-role-sep" aria-hidden="true">|</span>
+              <span class="pp-role-accent">Prompt Engineer</span>
+            </p>
+            {% if student_profile.bio %}
+            <p class="pp-bio">{{ student_profile.bio|truncatewords:40 }}</p>
+            {% else %}
+            <p class="pp-bio">I design and refine prompts and AI workflows for clear, reliable outputs, focused on structure, evaluation, and practical delivery.</p>
+            {% endif %}
+            {% if student_profile.location %}
+            <p class="pp-loc">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              {{ student_profile.location }}
+            </p>
+            {% endif %}
+            <div class="pp-hero-actions">
+              <a class="pp-btn pp-btn--primary" href="#pp-contact">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i> Contact Me
+              </a>
+              {% if first_certificate %}
+              <a class="pp-btn pp-btn--ghost" href="{% url 'lms:verify' certificate_id=first_certificate.certificate_id %}">
+                <i class="fa-solid fa-certificate" aria-hidden="true"></i> View Certificate
+              </a>
+              {% else %}
+              <a class="pp-btn pp-btn--ghost" href="#pp-certificate">
+                <i class="fa-solid fa-award" aria-hidden="true"></i> Certificate
+              </a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="pp-hero-photo-col pp-reveal pp-reveal-d2">
+            <div class="pp-photo-frame">
+              {% if student_profile.profile_photo %}
+              <img src="{{ student_profile.profile_photo.url }}" alt="{{ student_profile.display_name }}" loading="eager">
+              {% else %}
+              <div class="pp-photo-ph" aria-hidden="true"><i class="fa-solid fa-user"></i></div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {# ── Main content + sidebar ── #}
+    <main class="pp-content" id="pp-main">
+
+      {# ── Left / main column ── #}
+      <div>
+
+        {# About #}
+        <section id="pp-about" aria-labelledby="pp-about-h">
+          <div class="pp-card pp-reveal">
+            <div class="pp-card-head">
+              <h2 class="pp-card-title" id="pp-about-h"><i class="fa-solid fa-user" aria-hidden="true"></i> Bio</h2>
+            </div>
+            <div class="pp-card-body">
+              {% if student_profile.bio %}
+              <div class="pp-card-text">{{ student_profile.bio|linebreaks }}</div>
+              {% else %}
+              <p class="pp-card-muted">Bio not provided.</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="pp-card pp-reveal pp-reveal-d1">
+            <div class="pp-card-head">
+              <h2 class="pp-card-title"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Education</h2>
+            </div>
+            <div class="pp-card-body">
+              {% if student_profile.highest_education or student_profile.college or student_profile.graduation_year %}
+                {% if student_profile.highest_education %}<p class="pp-card-lead">{{ student_profile.highest_education }}</p>{% endif %}
+                {% if student_profile.college %}
+                <p class="pp-card-sub">{{ student_profile.college }}{% if student_profile.graduation_year %} &middot; Class of {{ student_profile.graduation_year }}{% endif %}</p>
+                {% elif student_profile.graduation_year %}
+                <p class="pp-card-sub">Class of {{ student_profile.graduation_year }}</p>
+                {% endif %}
+              {% else %}
+              <p class="pp-card-muted">Not listed.</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="pp-card pp-reveal pp-reveal-d2">
+            <div class="pp-card-head">
+              <h2 class="pp-card-title"><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Experience</h2>
+            </div>
+            <div class="pp-card-body">
+              {% if student_profile.experience %}
+              <div class="pp-card-text">{{ student_profile.experience|linebreaks }}</div>
+              {% else %}
+              <p class="pp-card-muted">Not listed.</p>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        {# Skills #}
+        <section id="pp-skills" aria-labelledby="pp-skills-h">
+          <div class="pp-card pp-reveal">
+            <div class="pp-card-head">
+              <h2 class="pp-card-title" id="pp-skills-h"><i class="fa-solid fa-tags" aria-hidden="true"></i> Skills</h2>
+            </div>
+            <div class="pp-skills">
+              {% if display_skills %}
+                {% for skill in display_skills %}
+                <span class="pp-skill">{{ skill }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="pp-skill">Prompt Engineering</span>
+                <span class="pp-skill">LLM workflows</span>
+                <span class="pp-skill">Structured outputs</span>
+                <span class="pp-skill">Instruction design</span>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        {# Work #}
+        <section id="pp-work" aria-labelledby="pp-work-h">
+          <div class="pp-card pp-reveal">
+            <div class="pp-card-head">
+              <h2 class="pp-card-title" id="pp-work-h"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Work &amp; Capabilities</h2>
+            </div>
+            <div class="pp-work-grid">
+              <div class="pp-work-item">
+                <div class="pp-work-ico" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></div>
+                <h3 class="pp-work-h3">AI use cases</h3>
+                <p class="pp-work-p">Workflow design around summarization, classification, drafting, and Q&amp;A, with explicit formats and guardrails.</p>
+                <ul class="pp-work-ul">
+                  <li>Structured extraction and reporting</li>
+                  <li>Review loops and quality checks</li>
+                  {% if display_skills %}<li>Areas: {{ display_skills|slice:":3"|join:", " }}{% if display_skills|length > 3 %}&hellip;{% endif %}</li>{% endif %}
+                </ul>
+              </div>
+              <div class="pp-work-item">
+                <div class="pp-work-ico" aria-hidden="true"><i class="fa-solid fa-pen-to-square"></i></div>
+                <h3 class="pp-work-h3">Prompt engineering</h3>
+                <p class="pp-work-p">System prompts, few-shot layouts, and output schemas suited to APIs and team handoff.</p>
+                <ul class="pp-work-ul">
+                  <li>Role, context, and constraints</li>
+                  <li>Testable prompt versions</li>
+                  <li>Tone and safety boundaries</li>
+                </ul>
+              </div>
+              <div class="pp-work-item">
+                <div class="pp-work-ico" aria-hidden="true"><i class="fa-solid fa-book"></i></div>
+                <h3 class="pp-work-h3">Learning highlights</h3>
+                {% if learning_highlights %}
+                  {% with h=learning_highlights.0 %}
+                  <p class="pp-work-h3" style="margin-bottom:4px;">{{ h.course_title }}</p>
+                  <p class="pp-work-p" style="font-size:.75rem;">{{ h.excerpt }}</p>
+                  <p style="font-size:.72rem;color:var(--g400);">Completed {{ h.completed_at|date:"F j, Y" }}</p>
+                  {% endwith %}
+                {% else %}
+                <p class="pp-work-p">No verified programs listed on this page.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {# Certificate #}
+        <section id="pp-certificate" aria-labelledby="pp-cert-h">
+          <div class="pp-card pp-reveal">
+            <div class="pp-card-head">
+              <h2 class="pp-card-title" id="pp-cert-h"><i class="fa-solid fa-award" aria-hidden="true"></i> Certificate</h2>
+            </div>
+            {% if first_certificate %}
+            <div class="pp-cert-box">
+              <div class="pp-cert-ico" aria-hidden="true"><i class="fa-solid fa-award"></i></div>
+              <div class="pp-cert-main">
+                <p class="pp-cert-verified"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Verified by BThinkX</p>
+                <p class="pp-cert-name">{{ first_certificate.course.title }}</p>
+                <p class="pp-cert-meta">Issued {{ first_certificate.created_at|date:"F j, Y" }}</p>
+                <a class="pp-btn pp-btn--primary pp-btn--sm" href="{% url 'lms:verify' certificate_id=first_certificate.certificate_id %}">
+                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Verify Certificate
+                </a>
+              </div>
+            </div>
+            {% if public_certificates|length > 1 %}
+            <ul class="pp-cert-extra">
+              {% for cert in public_certificates %}{% if not forloop.first %}
+              <li>
+                <i class="fa-solid fa-certificate" style="color:var(--v);margin-right:6px;" aria-hidden="true"></i>
+                <a href="{% url 'lms:verify' certificate_id=cert.certificate_id %}">{{ cert.course.title }}</a>
+                <span style="color:var(--g400);font-size:.78rem;"> · {{ cert.created_at|date:"M Y" }}</span>
+              </li>
+              {% endif %}{% endfor %}
+            </ul>
+            {% endif %}
+            {% else %}
+            <div class="pp-card-body">
+              <p class="pp-card-muted">No certificate on file for this profile.</p>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+
+      </div>{# /main column #}
+
+      {# ── Sidebar ── #}
+      <aside>
+
+        {# Contact #}
+        <div class="pp-sidebar-card pp-reveal" id="pp-contact">
+          <p class="pp-sidebar-title"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Let&rsquo;s Connect</p>
+          {% if whatsapp_contact_url or email_contact_href or student_profile.linkedin_url or student_profile.portfolio_url %}
+          <div class="pp-contact-btns">
+            {% if whatsapp_contact_url %}
+            <a class="pp-contact-btn pp-btn--wa" href="{{ whatsapp_contact_url }}" rel="noopener noreferrer" target="_blank">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp
+            </a>
+            {% endif %}
+            {% if email_contact_href %}
+            <a class="pp-contact-btn pp-btn--social" href="{{ email_contact_href }}" style="color:var(--g700);border:1px solid var(--g200);">
+              <i class="fa-solid fa-envelope" aria-hidden="true" style="color:var(--v);"></i> Email
+            </a>
+            {% endif %}
+            {% if student_profile.linkedin_url %}
+            <a class="pp-contact-btn pp-btn--social" href="{{ student_profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" style="color:var(--g700);border:1px solid var(--g200);">
+              <i class="fa-brands fa-linkedin-in" aria-hidden="true" style="color:#0077b5;"></i> LinkedIn
+            </a>
+            {% endif %}
+            {% if student_profile.portfolio_url %}
+            <a class="pp-contact-btn pp-btn--social" href="{{ student_profile.portfolio_url }}" target="_blank" rel="noopener noreferrer" style="color:var(--g700);border:1px solid var(--g200);">
+              <i class="fa-solid fa-globe" aria-hidden="true" style="color:var(--v);"></i> Website
+            </a>
+            {% endif %}
+          </div>
+          {% else %}
+          <p style="font-size:.85rem;color:var(--g400);">Contact details not available.</p>
+          {% endif %}
+        </div>
+
+        {# Quick info #}
+        <div class="pp-sidebar-card pp-reveal pp-reveal-d1">
+          <p class="pp-sidebar-title"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Quick Info</p>
+          <div class="pp-quick-info">
+            {% if student_profile.location %}
+            <div class="pp-quick-item">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              <span>{{ student_profile.location }}</span>
+            </div>
+            {% endif %}
+            {% if first_certificate %}
+            <div class="pp-quick-item">
+              <i class="fa-solid fa-award" aria-hidden="true"></i>
+              <span>CPEP Certified, <a href="{% url 'lms:verify' certificate_id=first_certificate.certificate_id %}" style="color:var(--v);font-weight:600;text-decoration:none;">Verify</a></span>
+            </div>
+            {% endif %}
+            {% if student_profile.available_for_freelance %}
+            <div class="pp-quick-item" style="color:var(--gr);">
+              <i class="fa-solid fa-circle" style="font-size:.5rem;margin-top:4px;" aria-hidden="true"></i>
+              <span style="font-weight:600;">Available for freelance</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {# Powered by BThinkX #}
+        <div class="pp-branding">
+          <a href="/" rel="noopener">
+            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+            Portfolio powered by BThinkX
+          </a>
+        </div>
+
+      </aside>
+
+    </main>
+
+    {# ── Footer ── #}
+    <footer class="pp-footer">
+      <p class="pp-footer-name">{{ student_profile.display_name }}</p>
+      <p class="pp-footer-copy">&copy; {% now "Y" %} Portfolio</p>
+      <a href="/" class="pp-footer-link">
+        <i class="fa-solid fa-bolt" aria-hidden="true"></i> Built with BThinkX
+      </a>
+    </footer>
+
+  </div>{# /pp-shell #}
+
+  <script>
+    // Reveal on scroll
+    (function(){
+      var els = document.querySelectorAll('.pp-reveal');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function(el){ el.classList.add('is-visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+      }, {threshold:0.12});
+      els.forEach(function(el){ io.observe(el); });
+    })();
+
+    // Smooth nav scroll
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        var id = a.getAttribute('href').slice(1);
+        var target = document.getElementById(id);
+        if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+      });
+    });
+
+    // Scroll-aware nav
+    var nav = document.getElementById('pp-nav');
+    window.addEventListener('scroll', function(){
+      if(window.scrollY > 50){
+        nav.style.background = 'rgba(255,255,255,0.97)';
+        nav.style.boxShadow = '0 1px 12px rgba(0,0,0,0.08)';
+      } else {
+        nav.style.background = 'rgba(255,255,255,0.88)';
+        nav.style.boxShadow = 'none';
+      }
+    }, {passive:true});
+  </script>
+</body>
+</html>
